@@ -8,7 +8,10 @@ use App\Models\AttendanceLog;
 use App\Models\Employee;
 use App\Models\FaceGallery;
 use App\Models\Location;
+use App\Rules\ValidBase64Image;
+use App\Rules\ValidCoordinates;
 use App\Services\FaceApiService;
+use App\Services\SecurityService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,10 +21,12 @@ use Illuminate\Support\Facades\Log;
 class AttendanceController extends Controller
 {
     protected FaceApiService $faceApiService;
+    protected SecurityService $securityService;
 
-    public function __construct(FaceApiService $faceApiService)
+    public function __construct(FaceApiService $faceApiService, SecurityService $securityService)
     {
         $this->faceApiService = $faceApiService;
+        $this->securityService = $securityService;
     }
 
     public function index()
@@ -44,19 +49,60 @@ class AttendanceController extends Controller
         $request->validate([
             'location_id' => 'required|exists:locations,id',
             'action' => 'required|in:check_in,check_out',
-            'face_image' => 'required|string',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'face_image' => ['required', new ValidBase64Image()],
+            'latitude' => ['required', new ValidCoordinates()],
+            'longitude' => ['required', new ValidCoordinates()],
         ]);
+
+        // Security validations
+        $timeValidation = $this->securityService->validateAttendanceTime();
+        if (!$timeValidation['valid']) {
+            return response()->json([
+                'success' => false,
+                'message' => $timeValidation['message']
+            ], 422);
+        }
+
+        $apiValidation = $this->securityService->validateApiRequest($request);
+        if (!$apiValidation['valid']) {
+            $this->securityService->logSuspiciousActivity('Invalid API request', $apiValidation['errors']);
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid request format.'
+            ], 422);
+        }
 
         $employee = Auth::user()->employee;
         $location = Location::find($request->location_id);
 
         if (!$employee->locations->contains($location)) {
+            $this->securityService->logSuspiciousActivity('Unauthorized location access', [
+                'employee_id' => $employee->id,
+                'location_id' => $request->location_id,
+            ]);
             return response()->json([
                 'success' => false,
                 'message' => 'You are not assigned to this location.'
             ], 403);
+        }
+
+        // Check for consecutive failed attempts
+        if ($this->securityService->checkConsecutiveFailedAttempts($employee->id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Too many failed face verification attempts. Please contact your administrator.'
+            ], 429);
+        }
+
+        // Check for suspicious location jumping
+        if ($this->securityService->detectMultipleLocationAttempts($employee->id, [
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+        ])) {
+            $this->securityService->logSuspiciousActivity('Suspicious location jumping detected', [
+                'employee_id' => $employee->id,
+                'current_location' => ['lat' => $request->latitude, 'lng' => $request->longitude],
+            ]);
         }
 
         $locationValidation = $this->validateLocation(

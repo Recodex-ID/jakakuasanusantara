@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin;
+use App\Http\Controllers\Employee;
 use App\Http\Controllers\Settings;
 use Illuminate\Support\Facades\Route;
 
@@ -7,9 +9,72 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Dynamic dashboard routing based on user role
+Route::get('dashboard', function () {
+    $user = auth()->user();
+    
+    if ($user->isAdmin()) {
+        return redirect()->route('admin.dashboard');
+    } elseif ($user->isEmployee()) {
+        return redirect()->route('employee.dashboard');
+    }
+    
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+// Admin Routes
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('dashboard', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+    
+    // Employee Management
+    Route::resource('employees', Admin\EmployeeController::class);
+    Route::post('employees/{employee}/enroll-face', [Admin\EmployeeController::class, 'enrollFace'])
+        ->name('employees.enroll-face');
+    
+    // Location Management
+    Route::resource('locations', Admin\LocationController::class);
+    Route::post('locations/validate', [Admin\LocationController::class, 'validateLocation'])
+        ->name('locations.validate');
+    
+    // Face Gallery Management
+    Route::resource('face-galleries', Admin\FaceGalleryController::class);
+    Route::get('face-galleries-sync', [Admin\FaceGalleryController::class, 'syncWithApi'])
+        ->name('face-galleries.sync');
+    
+    // Attendance Management
+    Route::resource('attendances', Admin\AttendanceController::class);
+    Route::get('attendances-monitor', [Admin\AttendanceController::class, 'monitor'])
+        ->name('attendances.monitor');
+    Route::post('attendances/bulk-update', [Admin\AttendanceController::class, 'bulkUpdate'])
+        ->name('attendances.bulk-update');
+    
+    // Reports
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [Admin\ReportController::class, 'index'])->name('index');
+        Route::get('attendance', [Admin\ReportController::class, 'attendance'])->name('attendance');
+        Route::get('summary', [Admin\ReportController::class, 'summary'])->name('summary');
+        Route::get('analytics', [Admin\ReportController::class, 'analytics'])->name('analytics');
+    });
+});
+
+// Employee Routes
+Route::middleware(['auth', 'employee', 'ensure.employee.profile'])->prefix('employee')->name('employee.')->group(function () {
+    Route::get('dashboard', [Employee\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('profile', [Employee\DashboardController::class, 'profile'])->name('profile');
+    Route::put('profile', [Employee\DashboardController::class, 'updateProfile'])->name('profile.update');
+    Route::get('attendance-stats', [Employee\DashboardController::class, 'attendanceStats'])->name('attendance.stats');
+    
+    // Attendance
+    Route::prefix('attendance')->name('attendance.')->group(function () {
+        Route::get('/', [Employee\AttendanceController::class, 'index'])->name('index');
+        Route::post('record', [Employee\AttendanceController::class, 'record'])
+            ->middleware('rate.limit.attendance')->name('record');
+        Route::get('history', [Employee\AttendanceController::class, 'history'])->name('history');
+        Route::get('{attendance}', [Employee\AttendanceController::class, 'show'])->name('show');
+    });
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::get('settings/profile', [Settings\ProfileController::class, 'edit'])->name('settings.profile.edit');
