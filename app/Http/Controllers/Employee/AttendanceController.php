@@ -229,6 +229,11 @@ class AttendanceController extends Controller
             'late_days' => $attendances->where('status', 'late')->count(),
         ];
 
+        // Handle export request
+        if ($request->has('export') && $request->export === 'csv') {
+            return $this->exportToCsv($attendances, $employee);
+        }
+
         return view('employee.attendance.history', compact('attendances', 'stats'));
     }
 
@@ -245,6 +250,64 @@ class AttendanceController extends Controller
         }]);
 
         return view('employee.attendance.show', compact('attendance'));
+    }
+
+    private function exportToCsv($attendances, $employee)
+    {
+        $filename = 'my_attendance_' . now()->format('Y-m-d_H-i-s') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function() use ($attendances, $employee) {
+            $file = fopen('php://output', 'w');
+            
+            // CSV Headers
+            fputcsv($file, [
+                'Attendance Report - ' . $employee->full_name
+            ]);
+            fputcsv($file, []); // Empty row
+            
+            fputcsv($file, [
+                'Date',
+                'Day',
+                'Location',
+                'Check In',
+                'Check Out',
+                'Working Hours',
+                'Status'
+            ]);
+
+            foreach ($attendances as $attendance) {
+                $workingHours = '';
+                if ($attendance->check_in) {
+                    if ($attendance->check_out) {
+                        $hours = $attendance->check_in->diffInHours($attendance->check_out, true);
+                        $workingHours = sprintf('%.2f hours', $hours);
+                    } elseif ($attendance->date->isToday()) {
+                        $workingHours = 'Currently working';
+                    } else {
+                        $workingHours = 'Incomplete';
+                    }
+                }
+
+                fputcsv($file, [
+                    $attendance->date->format('Y-m-d'),
+                    $attendance->date->format('l'),
+                    $attendance->location->name,
+                    $attendance->check_in ? $attendance->check_in->format('H:i:s') : '',
+                    $attendance->check_out ? $attendance->check_out->format('H:i:s') : '',
+                    $workingHours,
+                    ucfirst($attendance->status)
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     private function getTodayAttendance($employee)
