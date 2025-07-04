@@ -1,0 +1,175 @@
+<?php
+
+namespace App\Http\Controllers\Employee;
+
+use App\Http\Controllers\Controller;
+use App\Models\Attendance;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class DashboardController extends Controller
+{
+    public function index()
+    {
+        $employee = Auth::user()->employee;
+        
+        if (!$employee) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Employee profile not found.');
+        }
+
+        $todayAttendance = $this->getTodayAttendance($employee);
+        $thisMonthStats = $this->getThisMonthStats($employee);
+        $recentAttendances = $this->getRecentAttendances($employee);
+        $assignedLocations = $employee->locations()->where('status', 'active')->get();
+
+        return view('employee.dashboard', compact(
+            'todayAttendance',
+            'thisMonthStats',
+            'recentAttendances',
+            'assignedLocations'
+        ));
+    }
+
+    public function profile()
+    {
+        $employee = Auth::user()->employee;
+        
+        if (!$employee) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Employee profile not found.');
+        }
+
+        $employee->load(['user', 'locations']);
+
+        return view('employee.profile', compact('employee'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $employee = Auth::user()->employee;
+        
+        if (!$employee) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Employee profile not found.');
+        }
+
+        $request->validate([
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'date_of_birth' => 'nullable|date',
+            'gender' => 'nullable|in:male,female',
+        ]);
+
+        $employee->update($request->only([
+            'phone',
+            'address', 
+            'date_of_birth',
+            'gender'
+        ]));
+
+        return redirect()->route('employee.profile')
+            ->with('success', 'Profile updated successfully.');
+    }
+
+    public function attendanceStats(Request $request)
+    {
+        $employee = Auth::user()->employee;
+        $period = $request->get('period', 'month');
+
+        switch ($period) {
+            case 'week':
+                $startDate = Carbon::now()->startOfWeek();
+                $endDate = Carbon::now()->endOfWeek();
+                break;
+            case 'month':
+                $startDate = Carbon::now()->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+                break;
+            case 'year':
+                $startDate = Carbon::now()->startOfYear();
+                $endDate = Carbon::now()->endOfYear();
+                break;
+            default:
+                $startDate = Carbon::now()->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+        }
+
+        $attendances = Attendance::where('employee_id', $employee->id)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->get();
+
+        $stats = [
+            'period' => $period,
+            'start_date' => $startDate->format('Y-m-d'),
+            'end_date' => $endDate->format('Y-m-d'),
+            'total_days' => $attendances->count(),
+            'present_days' => $attendances->whereIn('status', ['present', 'late'])->count(),
+            'absent_days' => $attendances->where('status', 'absent')->count(),
+            'late_days' => $attendances->where('status', 'late')->count(),
+            'early_leave_days' => $attendances->where('status', 'early_leave')->count(),
+            'attendance_rate' => $attendances->count() > 0 
+                ? round(($attendances->whereIn('status', ['present', 'late'])->count() / $attendances->count()) * 100, 2)
+                : 0,
+        ];
+
+        return response()->json($stats);
+    }
+
+    private function getTodayAttendance($employee)
+    {
+        return Attendance::with(['location'])
+            ->where('employee_id', $employee->id)
+            ->where('date', Carbon::today())
+            ->first();
+    }
+
+    private function getThisMonthStats($employee)
+    {
+        $thisMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+
+        $attendances = Attendance::where('employee_id', $employee->id)
+            ->whereBetween('date', [$thisMonth, $endOfMonth])
+            ->get();
+
+        $workingDays = $this->calculateWorkingDays($thisMonth, $endOfMonth);
+
+        return [
+            'total_days' => $attendances->count(),
+            'present_days' => $attendances->whereIn('status', ['present', 'late'])->count(),
+            'absent_days' => $attendances->where('status', 'absent')->count(),
+            'late_days' => $attendances->where('status', 'late')->count(),
+            'working_days' => $workingDays,
+            'attendance_rate' => $attendances->count() > 0 
+                ? round(($attendances->whereIn('status', ['present', 'late'])->count() / $attendances->count()) * 100, 2)
+                : 0,
+        ];
+    }
+
+    private function getRecentAttendances($employee)
+    {
+        return Attendance::with(['location'])
+            ->where('employee_id', $employee->id)
+            ->orderBy('date', 'desc')
+            ->take(10)
+            ->get();
+    }
+
+    private function calculateWorkingDays($startDate, $endDate)
+    {
+        $workingDays = 0;
+        $current = $startDate->copy();
+
+        while ($current->lte($endDate)) {
+            // Skip weekends (Saturday = 6, Sunday = 0)
+            if ($current->dayOfWeek !== 0 && $current->dayOfWeek !== 6) {
+                $workingDays++;
+            }
+            $current->addDay();
+        }
+
+        return $workingDays;
+    }
+}
