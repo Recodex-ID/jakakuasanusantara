@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'biznet_face' => [
+        'url' => env('BIZNET_FACE_API_URL', 'https://fr.neoapi.id/risetai/face-api/'),
+        'token' => env('BIZNET_FACE_API_TOKEN'),
+        'timeout' => env('BIZNET_FACE_API_TIMEOUT', 30),
+        'similarity_threshold' => env('BIZNET_FACE_SIMILARITY_THRESHOLD', 0.75),
+    ],
+
 ];
