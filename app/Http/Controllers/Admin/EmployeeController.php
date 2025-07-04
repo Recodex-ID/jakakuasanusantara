@@ -55,6 +55,7 @@ class EmployeeController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'username' => 'required|string|max:255|unique:users',
             'password' => 'required|string|min:8',
             'employee_id' => 'required|string|unique:employees',
             'nik' => 'required|string|unique:employees',
@@ -73,6 +74,7 @@ class EmployeeController extends Controller
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'username' => $request->username,
                 'password' => Hash::make($request->password),
                 'role' => 'employee',
             ]);
@@ -101,11 +103,34 @@ class EmployeeController extends Controller
 
     public function show(Employee $employee)
     {
-        $employee->load(['user', 'locations', 'attendances' => function ($query) {
-            $query->latest()->take(10);
-        }]);
+        $employee->load(['user', 'locations']);
+        
+        // Get recent attendances
+        $recentAttendances = $employee->attendances()
+            ->with('location')
+            ->latest()
+            ->take(5)
+            ->get();
+            
+        // Get attendance statistics
+        $attendanceStats = [
+            'this_month' => $employee->attendances()
+                ->whereMonth('date', now()->month)
+                ->whereYear('date', now()->year)
+                ->count(),
+            'total_present' => $employee->attendances()
+                ->whereNotNull('check_in')
+                ->count(),
+            'total_absent' => $employee->attendances()
+                ->whereNull('check_in')
+                ->count(),
+            'total_late' => $employee->attendances()
+                ->whereNotNull('check_in')
+                ->whereRaw('TIME(check_in) > "09:00:00"')
+                ->count(),
+        ];
 
-        return view('admin.employees.show', compact('employee'));
+        return view('admin.employees.show', compact('employee', 'recentAttendances', 'attendanceStats'));
     }
 
     public function edit(Employee $employee)
@@ -121,6 +146,7 @@ class EmployeeController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($employee->user_id)],
+            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($employee->user_id)],
             'password' => 'nullable|string|min:8',
             'employee_id' => ['required', 'string', Rule::unique('employees')->ignore($employee->id)],
             'nik' => ['required', 'string', Rule::unique('employees')->ignore($employee->id)],
@@ -140,6 +166,7 @@ class EmployeeController extends Controller
             $userData = [
                 'name' => $request->name,
                 'email' => $request->email,
+                'username' => $request->username,
             ];
 
             if ($request->filled('password')) {

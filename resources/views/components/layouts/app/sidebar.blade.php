@@ -1,35 +1,62 @@
-            <aside :class="{ 'w-full md:w-64': sidebarOpen, 'w-0 md:w-16 hidden md:block': !sidebarOpen }"
-                class="bg-sidebar text-sidebar-foreground border-r border-gray-200 dark:border-gray-700 sidebar-transition overflow-hidden">
-                <!-- Sidebar Content -->
-                <div class="h-full flex flex-col">
-                    <!-- Sidebar Menu -->
-                    <nav class="flex-1 overflow-y-auto custom-scrollbar py-4">
-                        <ul class="space-y-1 px-2">
-                            <!-- Dashboard -->
-                            <x-layouts.sidebar-link href="{{ route('dashboard') }}" icon='fas-house'
-                                :active="request()->routeIs('dashboard*')">Dashboard</x-layouts.sidebar-link>
+<aside :class="{ 'w-full md:w-64': sidebarOpen, 'w-0 md:w-16 hidden md:block': !sidebarOpen }"
+    class="bg-sidebar text-sidebar-foreground border-r border-gray-200 dark:border-gray-700 sidebar-transition overflow-hidden">
+    <!-- Sidebar Content -->
+    <div class="h-full flex flex-col">
+        <!-- Sidebar Menu -->
+        <nav class="flex-1 overflow-y-auto custom-scrollbar py-4">
+            <ul class="space-y-1 px-2">
+                <!-- Dashboard -->
+                <x-layouts.sidebar-link href="{{ route('dashboard') }}" icon='fas-house'
+                    :active="request()->routeIs('dashboard*')">Dashboard</x-layouts.sidebar-link>
 
-                            <!-- Example two level -->
-                            <x-layouts.sidebar-two-level-link-parent title="Example two level" icon="fas-house"
-                                :active="request()->routeIs('two-level*')">
-                                <x-layouts.sidebar-two-level-link href="#" icon='fas-house'
-                                    :active="request()->routeIs('two-level*')">Child</x-layouts.sidebar-two-level-link>
-                            </x-layouts.sidebar-two-level-link-parent>
+                @if (auth()->user()->isAdmin())
+                    <!-- Employee Management -->
+                    <x-layouts.sidebar-link href="{{ route('admin.employees.index') }}" icon='fas-users'
+                        :active="request()->routeIs('admin.employees*')">Employees</x-layouts.sidebar-link>
 
-                            <!-- Example three level -->
-                            <x-layouts.sidebar-two-level-link-parent title="Example three level" icon="fas-house"
-                                :active="request()->routeIs('three-level*')">
-                                <x-layouts.sidebar-two-level-link href="#" icon='fas-house'
-                                    :active="request()->routeIs('three-level*')">Single Link</x-layouts.sidebar-two-level-link>
+                    <!-- Location Management -->
+                    <x-layouts.sidebar-link href="{{ route('admin.locations.index') }}" icon='fas-map-marker-alt'
+                        :active="request()->routeIs('admin.locations*')">Locations</x-layouts.sidebar-link>
 
-                                <x-layouts.sidebar-three-level-parent title="Third Level" icon="fas-house"
-                                    :active="request()->routeIs('three-level*')">
-                                    <x-layouts.sidebar-three-level-link href="#" :active="request()->routeIs('three-level*')">
-                                        Third Level Link
-                                    </x-layouts.sidebar-three-level-link>
-                                </x-layouts.sidebar-three-level-parent>
-                            </x-layouts.sidebar-two-level-link-parent>
-                        </ul>
-                    </nav>
-                </div>
-            </aside>
+                    <!-- Face Gallery Management -->
+                    <x-layouts.sidebar-link href="{{ route('admin.face-galleries.index') }}" icon='fas-images'
+                        :active="request()->routeIs('admin.face-galleries*')">Face Gallery</x-layouts.sidebar-link>
+
+                    <!-- Attendance Management -->
+                    <x-layouts.sidebar-link href="{{ route('admin.attendances.index') }}" icon='fas-clock'
+                        :active="request()->routeIs('admin.attendances*')">Attendance</x-layouts.sidebar-link>
+
+                    <!-- Reports -->
+                    <x-layouts.sidebar-two-level-link-parent title="Reports" icon="fas-chart-bar" :active="request()->routeIs('admin.reports*')">
+                        <x-layouts.sidebar-two-level-link href="{{ route('admin.reports.attendance') }}"
+                            icon='fas-chart-line' :active="request()->routeIs('admin.reports.attendance*')">Attendance Report</x-layouts.sidebar-two-level-link>
+                        <x-layouts.sidebar-two-level-link href="{{ route('admin.reports.summary') }}"
+                            icon='fas-chart-pie' :active="request()->routeIs('admin.reports.summary*')">Summary Report</x-layouts.sidebar-two-level-link>
+                        <x-layouts.sidebar-two-level-link href="{{ route('admin.reports.analytics') }}"
+                            icon='fas-chart-simple' :active="request()->routeIs('admin.reports.analytics*')">Analytics</x-layouts.sidebar-two-level-link>
+                    </x-layouts.sidebar-two-level-link-parent>
+                @endif
+
+                @if (auth()->user()->isEmployee())
+                    <!-- Employee Attendance -->
+                    <x-layouts.sidebar-link href="{{ route('employee.attendance.index') }}" icon='fas-clock'
+                        :active="request()->routeIs('employee.attendance*')">My Attendance</x-layouts.sidebar-link>
+
+                    <!-- Employee Profile -->
+                    <x-layouts.sidebar-link href="{{ route('employee.profile') }}" icon='fas-user' :active="request()->routeIs('employee.profile*')">My
+                        Profile</x-layouts.sidebar-link>
+                @endif
+
+                <!-- Settings -->
+                <x-layouts.sidebar-two-level-link-parent title="Settings" icon="fas-cog" :active="request()->routeIs('settings*')">
+                    <x-layouts.sidebar-two-level-link href="{{ route('settings.profile.edit') }}" icon='fas-user-edit'
+                        :active="request()->routeIs('settings.profile*')">Profile</x-layouts.sidebar-two-level-link>
+                    <x-layouts.sidebar-two-level-link href="{{ route('settings.password.edit') }}" icon='fas-key'
+                        :active="request()->routeIs('settings.password*')">Password</x-layouts.sidebar-two-level-link>
+                    <x-layouts.sidebar-two-level-link href="{{ route('settings.appearance.edit') }}" icon='fas-palette'
+                        :active="request()->routeIs('settings.appearance*')">Appearance</x-layouts.sidebar-two-level-link>
+                </x-layouts.sidebar-two-level-link-parent>
+            </ul>
+        </nav>
+    </div>
+</aside>

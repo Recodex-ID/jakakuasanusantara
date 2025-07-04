@@ -13,10 +13,7 @@
                         </div>
                         <a href="{{ route('admin.employees.index') }}"
                             class="inline-flex items-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                            </svg>
+                            <x-fas-arrow-left class="w-5 h-5 mr-2" />
                             Back to Employees
                         </a>
                     </div>
@@ -34,48 +31,23 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">User Account Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
-                                        Full Name <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" name="name" id="name" value="{{ old('name') }}"
-                                        required
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('name') border-red-500 @enderror">
-                                    @error('name')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <x-forms.input label="Full Name *" name="name" type="text" placeholder="Enter full name" value="{{ old('name') }}" required />
                                 </div>
 
                                 <div>
-                                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
-                                        Email Address <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="email" name="email" id="email" value="{{ old('email') }}"
-                                        required
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('email') border-red-500 @enderror">
-                                    @error('email')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <x-forms.input label="Email Address *" name="email" type="email" placeholder="your@email.com" value="{{ old('email') }}" required />
                                 </div>
 
                                 <div>
-                                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
-                                        Password <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="password" name="password" id="password" required
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('password') border-red-500 @enderror">
-                                    @error('password')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <x-forms.input label="Username *" name="username" type="text" placeholder="Enter username" value="{{ old('username') }}" required />
                                 </div>
 
                                 <div>
-                                    <label for="password_confirmation"
-                                        class="block text-sm font-medium text-gray-700 mb-1">
-                                        Confirm Password <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="password" name="password_confirmation" id="password_confirmation"
-                                        required
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                    <x-forms.input label="Password *" name="password" type="password" placeholder="••••••••" required />
+                                </div>
+
+                                <div>
+                                    <x-forms.input label="Confirm Password *" name="password_confirmation" type="password" placeholder="••••••••" required />
                                 </div>
                             </div>
                         </div>
@@ -85,115 +57,39 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Employee Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label for="employee_id" class="block text-sm font-medium text-gray-700 mb-1">
-                                        Employee ID <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" name="employee_id" id="employee_id"
-                                        value="{{ old('employee_id') }}" required placeholder="e.g., EMP001"
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('employee_id') border-red-500 @enderror">
-                                    @error('employee_id')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <x-forms.input label="Employee ID *" name="employee_id" type="text" placeholder="e.g., EMP001" value="{{ old('employee_id') }}" required />
                                 </div>
 
                                 <div>
-                                    <label for="nik" class="block text-sm font-medium text-gray-700 mb-1">
-                                        NIK (National ID) <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" name="nik" id="nik" value="{{ old('nik') }}"
-                                        required placeholder="16-digit NIK" maxlength="16"
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('nik') border-red-500 @enderror">
-                                    @error('nik')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <x-forms.input label="NIK (National ID) *" name="nik" type="text" placeholder="16-digit NIK" value="{{ old('nik') }}" maxlength="16" required />
                                 </div>
 
                                 <div>
-                                    <label for="full_name" class="block text-sm font-medium text-gray-700 mb-1">
-                                        Full Name (as per ID) <span class="text-red-500">*</span>
-                                    </label>
-                                    <input type="text" name="full_name" id="full_name"
-                                        value="{{ old('full_name') }}" required
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('full_name') border-red-500 @enderror">
-                                    @error('full_name')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <x-forms.input label="Full Name (as per ID) *" name="full_name" type="text" placeholder="Enter full name as per ID" value="{{ old('full_name') }}" required />
                                 </div>
 
                                 <div>
-                                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">
-                                        Phone Number
-                                    </label>
-                                    <input type="text" name="phone" id="phone" value="{{ old('phone') }}"
-                                        placeholder="e.g., +62812345678"
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('phone') border-red-500 @enderror">
-                                    @error('phone')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <x-forms.input label="Phone Number" name="phone" type="text" placeholder="e.g., +62812345678" value="{{ old('phone') }}" />
                                 </div>
 
                                 <div>
-                                    <label for="department" class="block text-sm font-medium text-gray-700 mb-1">
-                                        Department
-                                    </label>
-                                    <input type="text" name="department" id="department"
-                                        value="{{ old('department') }}" placeholder="e.g., Information Technology"
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('department') border-red-500 @enderror">
-                                    @error('department')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <x-forms.input label="Department" name="department" type="text" placeholder="e.g., Information Technology" value="{{ old('department') }}" />
                                 </div>
 
                                 <div>
-                                    <label for="position" class="block text-sm font-medium text-gray-700 mb-1">
-                                        Position
-                                    </label>
-                                    <input type="text" name="position" id="position"
-                                        value="{{ old('position') }}" placeholder="e.g., Software Developer"
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('position') border-red-500 @enderror">
-                                    @error('position')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <x-forms.input label="Position" name="position" type="text" placeholder="e.g., Software Developer" value="{{ old('position') }}" />
                                 </div>
 
                                 <div>
-                                    <label for="date_of_birth" class="block text-sm font-medium text-gray-700 mb-1">
-                                        Date of Birth
-                                    </label>
-                                    <input type="date" name="date_of_birth" id="date_of_birth"
-                                        value="{{ old('date_of_birth') }}"
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('date_of_birth') border-red-500 @enderror">
-                                    @error('date_of_birth')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <x-forms.input label="Date of Birth" name="date_of_birth" type="date" value="{{ old('date_of_birth') }}" />
                                 </div>
 
                                 <div>
-                                    <label for="gender" class="block text-sm font-medium text-gray-700 mb-1">
-                                        Gender
-                                    </label>
-                                    <select name="gender" id="gender"
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('gender') border-red-500 @enderror">
-                                        <option value="">Select Gender</option>
-                                        <option value="male" {{ old('gender') === 'male' ? 'selected' : '' }}>Male
-                                        </option>
-                                        <option value="female" {{ old('gender') === 'female' ? 'selected' : '' }}>
-                                            Female</option>
-                                    </select>
-                                    @error('gender')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <x-forms.select label="Gender" name="gender" placeholder="Select Gender" :options="['male' => 'Male', 'female' => 'Female']" :selected="old('gender')" />
                                 </div>
 
                                 <div class="md:col-span-2">
-                                    <label for="address" class="block text-sm font-medium text-gray-700 mb-1">
-                                        Address
-                                    </label>
-                                    <textarea name="address" id="address" rows="3" placeholder="Full address..."
-                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('address') border-red-500 @enderror">{{ old('address') }}</textarea>
-                                    @error('address')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <x-forms.textarea label="Address" name="address" placeholder="Full address..." rows="3" value="{{ old('address') }}" />
                                 </div>
                             </div>
                         </div>

@@ -14,19 +14,12 @@
                         <div class="flex items-center space-x-3">
                             <a href="{{ route('admin.employees.edit', $employee) }}"
                                 class="inline-flex items-center px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-semibold rounded-lg transition-colors">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                    </path>
-                                </svg>
+                                <x-fas-edit class="w-5 h-5 mr-2" />
                                 Edit Employee
                             </a>
                             <a href="{{ route('admin.employees.index') }}"
                                 class="inline-flex items-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                                </svg>
+                                <x-fas-arrow-left class="w-5 h-5 mr-2" />
                                 Back to Employees
                             </a>
                         </div>
@@ -57,6 +50,10 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Email</label>
                                     <p class="mt-1 text-sm text-gray-900">{{ $employee->user->email }}</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Username</label>
+                                    <p class="mt-1 text-sm text-gray-900">{{ $employee->user->username ?? '-' }}</p>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Phone</label>
@@ -187,30 +184,17 @@
                             <div class="space-y-3">
                                 <button onclick="enrollFace({{ $employee->id }})"
                                     class="w-full flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                        </path>
-                                    </svg>
+                                    <x-fas-camera class="w-5 h-5 mr-2" />
                                     Enroll Face
                                 </button>
                                 <a href="{{ route('admin.attendances.employee', $employee) }}"
                                     class="w-full flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
+                                    <x-fas-clock class="w-5 h-5 mr-2" />
                                     View Attendance
                                 </a>
                                 <a href="{{ route('admin.employees.edit', $employee) }}"
                                     class="w-full flex items-center justify-center px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-lg transition-colors">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                        </path>
-                                    </svg>
+                                    <x-fas-edit class="w-5 h-5 mr-2" />
                                     Edit Profile
                                 </a>
                             </div>

@@ -13,10 +13,7 @@
                         </div>
                         <a href="{{ route('admin.employees.create') }}"
                             class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                            </svg>
+                            <x-fas-plus class="w-5 h-5 mr-2" />
                             Add Employee
                         </a>
                     </div>
@@ -29,21 +26,13 @@
                     <form method="GET" action="{{ route('admin.employees.index') }}"
                         class="flex flex-wrap gap-4 items-end">
                         <div class="flex-1 min-w-64">
-                            <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                            <input type="text" name="search" id="search" value="{{ request('search') }}"
+                            <x-forms.input label="Search" name="search" type="text"
                                 placeholder="Search by name, employee ID, NIK, or department..."
-                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                value="{{ request('search') }}" />
                         </div>
                         <div class="min-w-32">
-                            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                            <select name="status" id="status"
-                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                <option value="">All Status</option>
-                                <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active
-                                </option>
-                                <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>
-                                    Inactive</option>
-                            </select>
+                            <x-forms.select label="Status" name="status" placeholder="All Status" :options="['active' => 'Active', 'inactive' => 'Inactive']"
+                                :selected="request('status')" />
                         </div>
                         <div class="flex gap-2">
                             <button type="submit"
@@ -109,6 +98,9 @@
                                                     {{ $employee->full_name }}
                                                 </div>
                                                 <div class="text-sm text-gray-500">
+                                                    {{ $employee->user->username }}
+                                                </div>
+                                                <div class="text-xs text-gray-400">
                                                     {{ $employee->user->email }}
                                                 </div>
                                             </div>
@@ -146,50 +138,25 @@
                                         <div class="flex items-center space-x-2">
                                             <a href="{{ route('admin.employees.show', $employee) }}"
                                                 class="text-blue-600 hover:text-blue-900" title="View Details">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                                    </path>
-                                                </svg>
+                                                <x-fas-eye class="w-5 h-5" />
                                             </a>
                                             <a href="{{ route('admin.employees.edit', $employee) }}"
                                                 class="text-yellow-600 hover:text-yellow-900" title="Edit">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                                    </path>
-                                                </svg>
+                                                <x-fas-edit class="w-5 h-5" />
                                             </a>
                                             <button onclick="enrollFace({{ $employee->id }})"
                                                 class="text-purple-600 hover:text-purple-900" title="Enroll Face">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                                    </path>
-                                                </svg>
+                                                <x-fas-camera class="w-5 h-5" />
                                             </button>
                                             <form method="POST"
                                                 action="{{ route('admin.employees.destroy', $employee) }}"
-                                                class="inline" onsubmit="return confirmDelete()">
+                                                class="inline-flex" onsubmit="return confirmDelete()">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900"
+                                                <button type="submit"
+                                                    class="text-red-600 hover:text-red-900 flex items-center"
                                                     title="Delete">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                        viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                                        </path>
-                                                    </svg>
+                                                    <x-fas-trash class="w-5 h-5" />
                                                 </button>
                                             </form>
                                         </div>
@@ -199,12 +166,7 @@
                                 <tr>
                                     <td colspan="6" class="px-6 py-12 text-center">
                                         <div class="text-gray-500">
-                                            <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none"
-                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-                                                </path>
-                                            </svg>
+                                            <x-fas-users class="w-12 h-12 mx-auto mb-4 text-gray-400" />
                                             <p class="text-lg font-medium">No employees found</p>
                                             <p class="text-sm">Get started by creating a new employee account.</p>
                                             <a href="{{ route('admin.employees.create') }}"
@@ -229,8 +191,7 @@
     </div>
 
     <!-- Face Enrollment Modal -->
-    <div id="faceEnrollmentModal"
-        class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+    <div id="faceEnrollmentModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3 text-center">
                 <h3 class="text-lg font-medium text-gray-900">Enroll Face</h3>
