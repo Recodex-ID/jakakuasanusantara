@@ -79,6 +79,8 @@ class User extends Authenticatable
 
     /**
      * Check if user is employee
+     * 
+     * @return bool
      */
     public function isEmployee(): bool
     {

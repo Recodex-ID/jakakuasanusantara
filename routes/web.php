@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Employee;
 use App\Http\Controllers\Settings;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -11,11 +12,12 @@ Route::get('/', function () {
 
 // Dynamic dashboard routing based on user role
 Route::get('dashboard', function () {
-    $user = auth()->user();
+    /** @var \App\Models\User|null $user */
+    $user = Auth::user();
     
-    if ($user->isAdmin()) {
+    if ($user && $user->isAdmin()) {
         return redirect()->route('admin.dashboard');
-    } elseif ($user->isEmployee()) {
+    } elseif ($user && $user->isEmployee()) {
         return redirect()->route('employee.dashboard');
     }
     
@@ -30,8 +32,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // Employee Management
     Route::resource('employees', Admin\EmployeeController::class);
-    Route::post('employees/{employee}/enroll-face', [Admin\EmployeeController::class, 'enrollFace'])
+    Route::get('employees/{employee}/enroll-face', [Admin\EmployeeController::class, 'showEnrollFace'])
         ->name('employees.enroll-face');
+    Route::post('employees/{employee}/enroll-face', [Admin\EmployeeController::class, 'enrollFace'])
+        ->name('employees.enroll-face.store');
     
     // Location Management
     Route::resource('locations', Admin\LocationController::class);

@@ -2,7 +2,7 @@
     <x-slot name="title">Employee Details</x-slot>
 
     <div class="py-6">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">
@@ -182,11 +182,11 @@
                         <div class="p-6">
                             <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
                             <div class="space-y-3">
-                                <button onclick="enrollFace({{ $employee->id }})"
+                                <a href="{{ route('admin.employees.enroll-face', $employee) }}"
                                     class="w-full flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors">
                                     <x-fas-camera class="w-5 h-5 mr-2" />
                                     Enroll Face
-                                </button>
+                                </a>
                                 <a href="{{ route('admin.attendances.employee', $employee) }}"
                                     class="w-full flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
                                     <x-fas-clock class="w-5 h-5 mr-2" />
@@ -214,16 +214,19 @@
                                             <div>
                                                 <p class="font-medium text-gray-900">{{ $attendance->location->name }}
                                                 </p>
-                                                <p class="text-gray-600">{{ $attendance->date->format('M j, Y') }}</p>
+                                                <p class="text-gray-600">
+                                                    {{ $attendance->date?->format('M j, Y') ?? '-' }}</p>
                                             </div>
                                             <div class="text-right">
                                                 @if ($attendance->check_in)
                                                     <p class="text-green-600">In:
-                                                        {{ $attendance->check_in->format('H:i') }}</p>
+                                                        {{ $attendance->check_in ? $attendance->check_in->format('H:i') : '-' }}
+                                                    </p>
                                                 @endif
                                                 @if ($attendance->check_out)
                                                     <p class="text-red-600">Out:
-                                                        {{ $attendance->check_out->format('H:i') }}</p>
+                                                        {{ $attendance->check_out ? $attendance->check_out->format('H:i') : '-' }}
+                                                    </p>
                                                 @endif
                                             </div>
                                         </div>
@@ -236,113 +239,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Face Enrollment Modal -->
-    <div id="faceEnrollmentModal"
-        class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div class="mt-3 text-center">
-                <h3 class="text-lg font-medium text-gray-900">Enroll Face</h3>
-                <p class="text-sm text-gray-500 mt-2">Take a photo for face recognition enrollment</p>
-
-                <div class="mt-4">
-                    <video id="video" class="w-full h-64 bg-gray-200 rounded-lg" autoplay></video>
-                    <canvas id="canvas" class="hidden"></canvas>
-                </div>
-
-                <div class="mt-4 flex justify-center space-x-3">
-                    <button onclick="capturePhoto()"
-                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg">
-                        Capture Photo
-                    </button>
-                    <button onclick="closeEnrollmentModal()"
-                        class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let stream = null;
-
-        function enrollFace(employeeId) {
-            document.getElementById('faceEnrollmentModal').classList.remove('hidden');
-            startCamera();
-        }
-
-        function closeEnrollmentModal() {
-            document.getElementById('faceEnrollmentModal').classList.add('hidden');
-            stopCamera();
-        }
-
-        function startCamera() {
-            navigator.mediaDevices.getUserMedia({
-                    video: true
-                })
-                .then(function(mediaStream) {
-                    stream = mediaStream;
-                    document.getElementById('video').srcObject = stream;
-                })
-                .catch(function(err) {
-                    alert('Camera access denied or not available');
-                });
-        }
-
-        function stopCamera() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
-        }
-
-        function capturePhoto() {
-            const video = document.getElementById('video');
-            const canvas = document.getElementById('canvas');
-            const context = canvas.getContext('2d');
-
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0);
-
-            canvas.toBlob(function(blob) {
-                const reader = new FileReader();
-                reader.onloadend = function() {
-                    const base64data = reader.result.split(',')[1];
-                    submitFaceEnrollment(base64data);
-                };
-                reader.readAsDataURL(blob);
-            }, 'image/jpeg', 0.8);
-        }
-
-        function submitFaceEnrollment(faceImage) {
-            const galleryId = 'default_gallery';
-
-            fetch(`/admin/employees/{{ $employee->id }}/enroll-face`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        face_image: faceImage,
-                        gallery_id: galleryId
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Face enrolled successfully!');
-                    } else {
-                        alert('Face enrollment failed: ' + data.message);
-                    }
-                    closeEnrollmentModal();
-                })
-                .catch(error => {
-                    alert('An error occurred during face enrollment');
-                    closeEnrollmentModal();
-                });
-        }
-    </script>
 </x-layouts.app>

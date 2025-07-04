@@ -203,6 +203,13 @@ class EmployeeController extends Controller
             ->with('success', 'Employee deleted successfully.');
     }
 
+    public function showEnrollFace(Employee $employee)
+    {
+        $employee->load(['user', 'locations']);
+        
+        return view('admin.employees.enroll-face', compact('employee'));
+    }
+
     public function enrollFace(Request $request, Employee $employee)
     {
         $request->validate([

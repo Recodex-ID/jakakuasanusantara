@@ -2,7 +2,7 @@
     <x-slot name="title">Create Employee</x-slot>
 
     <div class="py-6">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">
@@ -31,23 +31,28 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">User Account Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <x-forms.input label="Full Name *" name="name" type="text" placeholder="Enter full name" value="{{ old('name') }}" required />
+                                    <x-forms.input label="Full Name *" name="name" type="text"
+                                        placeholder="Enter full name" value="{{ old('name') }}" required />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Email Address *" name="email" type="email" placeholder="your@email.com" value="{{ old('email') }}" required />
+                                    <x-forms.input label="Email Address *" name="email" type="email"
+                                        placeholder="your@email.com" value="{{ old('email') }}" required />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Username *" name="username" type="text" placeholder="Enter username" value="{{ old('username') }}" required />
+                                    <x-forms.input label="Username *" name="username" type="text"
+                                        placeholder="Enter username" value="{{ old('username') }}" required />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Password *" name="password" type="password" placeholder="••••••••" required />
+                                    <x-forms.input label="Password *" name="password" type="password"
+                                        placeholder="••••••••" required />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Confirm Password *" name="password_confirmation" type="password" placeholder="••••••••" required />
+                                    <x-forms.input label="Confirm Password *" name="password_confirmation"
+                                        type="password" placeholder="••••••••" required />
                                 </div>
                             </div>
                         </div>
@@ -57,39 +62,50 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Employee Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <x-forms.input label="Employee ID *" name="employee_id" type="text" placeholder="e.g., EMP001" value="{{ old('employee_id') }}" required />
+                                    <x-forms.input label="Employee ID *" name="employee_id" type="text"
+                                        placeholder="e.g., EMP001" value="{{ old('employee_id') }}" required />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="NIK (National ID) *" name="nik" type="text" placeholder="16-digit NIK" value="{{ old('nik') }}" maxlength="16" required />
+                                    <x-forms.input label="NIK (National ID) *" name="nik" type="text"
+                                        placeholder="16-digit NIK" value="{{ old('nik') }}" maxlength="16"
+                                        required />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Full Name (as per ID) *" name="full_name" type="text" placeholder="Enter full name as per ID" value="{{ old('full_name') }}" required />
+                                    <x-forms.input label="Full Name (as per ID) *" name="full_name" type="text"
+                                        placeholder="Enter full name as per ID" value="{{ old('full_name') }}"
+                                        required />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Phone Number" name="phone" type="text" placeholder="e.g., +62812345678" value="{{ old('phone') }}" />
+                                    <x-forms.input label="Phone Number" name="phone" type="text"
+                                        placeholder="e.g., +62812345678" value="{{ old('phone') }}" />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Department" name="department" type="text" placeholder="e.g., Information Technology" value="{{ old('department') }}" />
+                                    <x-forms.input label="Department" name="department" type="text"
+                                        placeholder="e.g., Information Technology" value="{{ old('department') }}" />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Position" name="position" type="text" placeholder="e.g., Software Developer" value="{{ old('position') }}" />
+                                    <x-forms.input label="Position" name="position" type="text"
+                                        placeholder="e.g., Software Developer" value="{{ old('position') }}" />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Date of Birth" name="date_of_birth" type="date" value="{{ old('date_of_birth') }}" />
+                                    <x-forms.input label="Date of Birth" name="date_of_birth" type="date"
+                                        value="{{ old('date_of_birth') }}" />
                                 </div>
 
                                 <div>
-                                    <x-forms.select label="Gender" name="gender" placeholder="Select Gender" :options="['male' => 'Male', 'female' => 'Female']" :selected="old('gender')" />
+                                    <x-forms.select label="Gender" name="gender" placeholder="Select Gender"
+                                        :options="['male' => 'Male', 'female' => 'Female']" :selected="old('gender')" />
                                 </div>
 
                                 <div class="md:col-span-2">
-                                    <x-forms.textarea label="Address" name="address" placeholder="Full address..." rows="3" value="{{ old('address') }}" />
+                                    <x-forms.textarea label="Address" name="address" placeholder="Full address..."
+                                        rows="3" value="{{ old('address') }}" />
                                 </div>
                             </div>
                         </div>
