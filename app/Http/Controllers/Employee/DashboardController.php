@@ -19,16 +19,23 @@ class DashboardController extends Controller
                 ->with('error', 'Employee profile not found.');
         }
 
+        $employee->load(['user', 'location']);
+
         $todayAttendance = $this->getTodayAttendance($employee);
-        $thisMonthStats = $this->getThisMonthStats($employee);
+        $monthlyStats = $this->getThisMonthStats($employee);
         $recentAttendances = $this->getRecentAttendances($employee);
         $assignedLocation = $employee->location && $employee->location->status === 'active' ? $employee->location : null;
+        
+        // Check if face is enrolled
+        $faceEnrolled = $employee->isFaceEnrolled();
 
         return view('employee.dashboard', compact(
+            'employee',
             'todayAttendance',
-            'thisMonthStats',
+            'monthlyStats',
             'recentAttendances',
-            'assignedLocation'
+            'assignedLocation',
+            'faceEnrolled'
         ));
     }
 
@@ -136,15 +143,18 @@ class DashboardController extends Controller
 
         $workingDays = $this->calculateWorkingDays($thisMonth, $endOfMonth);
 
+        // Calculate expected working days based on employee's schedule
+        $expectedWorkingDays = $this->calculateExpectedWorkingDays($employee, $thisMonth, $endOfMonth);
+        
         return [
             'total_days' => $attendances->count(),
-            'present_days' => $attendances->whereIn('status', ['present', 'late'])->count(),
-            'absent_days' => $attendances->where('status', 'absent')->count(),
-            'late_days' => $attendances->where('status', 'late')->count(),
-            'working_days' => $workingDays,
-            'attendance_rate' => $attendances->count() > 0 
-                ? round(($attendances->whereIn('status', ['present', 'late'])->count() / $attendances->count()) * 100, 2)
-                : 0,
+            'present' => $attendances->whereIn('status', ['present', 'late'])->count(),
+            'absent' => $attendances->where('status', 'absent')->count(),
+            'late' => $attendances->where('status', 'late')->count(),
+            'expected_days' => $expectedWorkingDays,
+            'attendance_rate' => $expectedWorkingDays > 0 
+                ? round(($attendances->whereIn('status', ['present', 'late'])->count() / $expectedWorkingDays) * 100, 2) . '%'
+                : '0%',
         ];
     }
 
@@ -165,6 +175,23 @@ class DashboardController extends Controller
         while ($current->lte($endDate)) {
             // Skip weekends (Saturday = 6, Sunday = 0)
             if ($current->dayOfWeek !== 0 && $current->dayOfWeek !== 6) {
+                $workingDays++;
+            }
+            $current->addDay();
+        }
+
+        return $workingDays;
+    }
+
+    private function calculateExpectedWorkingDays($employee, $startDate, $endDate)
+    {
+        $workingDays = 0;
+        $current = $startDate->copy();
+        $employeeWorkDays = $employee->work_days ?? ['1', '2', '3', '4', '5'];
+
+        while ($current->lte($endDate)) {
+            // Check if current day is in employee's work days
+            if (in_array((string)$current->dayOfWeek, $employeeWorkDays)) {
                 $workingDays++;
             }
             $current->addDay();

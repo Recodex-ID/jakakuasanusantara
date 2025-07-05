@@ -17,26 +17,17 @@
                         <div class="flex items-center space-x-3">
                             <a href="{{ route('employee.attendance.index') }}"
                                 class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
+                                <x-fas-clock class="w-5 h-5 mr-2" />
                                 Record Attendance
                             </a>
                             <a href="{{ route('employee.attendance.history', array_merge(request()->all(), ['export' => 'csv'])) }}"
                                 class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
+                                <x-fas-download class="w-5 h-5 mr-2" />
                                 Export CSV
                             </a>
                             <a href="{{ route('employee.dashboard') }}"
                                 class="inline-flex items-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2V7z"></path>
-                                </svg>
+                                <x-fas-tachometer-alt class="w-5 h-5 mr-2" />
                                 Dashboard
                             </a>
                         </div>
@@ -51,12 +42,7 @@
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
                                 <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4v10m0-10h12m-6-4h4a2 2 0 012 2v4M6 7h8a2 2 0 012 2v10a2 2 0 01-2 2H6a2 2 0 01-2-2V9a2 2 0 012-2z">
-                                        </path>
-                                    </svg>
+                                    <x-fas-calendar-alt class="w-5 h-5 text-blue-600" />
                                 </div>
                             </div>
                             <div class="ml-4">
@@ -72,11 +58,7 @@
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
                                 <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 13l4 4L19 7"></path>
-                                    </svg>
+                                    <x-fas-check class="w-5 h-5 text-green-600" />
                                 </div>
                             </div>
                             <div class="ml-4">
@@ -92,11 +74,7 @@
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
                                 <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
+                                    <x-fas-times class="w-5 h-5 text-red-600" />
                                 </div>
                             </div>
                             <div class="ml-4">
@@ -112,11 +90,7 @@
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
                                 <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
+                                    <x-fas-clock class="w-5 h-5 text-yellow-600" />
                                 </div>
                             </div>
                             <div class="ml-4">
@@ -260,14 +234,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="{{ route('employee.attendance.show', $attendance) }}"
                                             class="text-blue-600 hover:text-blue-900" title="View Details">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                                </path>
-                                            </svg>
+                                            <x-fas-eye class="w-5 h-5" />
                                         </a>
                                     </td>
                                 </tr>
@@ -275,12 +242,7 @@
                                 <tr>
                                     <td colspan="7" class="px-6 py-12 text-center">
                                         <div class="text-gray-500">
-                                            <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none"
-                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
-                                                </path>
-                                            </svg>
+                                            <x-fas-clipboard-list class="w-12 h-12 mx-auto mb-4 text-gray-400" />
                                             <p class="text-lg font-medium">No attendance records found</p>
                                             <p class="text-sm">Records for the selected month will appear here.</p>
                                             <a href="{{ route('employee.attendance.index') }}"

@@ -37,10 +37,20 @@ class AttendanceController extends Controller
                 ->with('error', 'Employee profile not found.');
         }
 
-        $location = $employee->location && $employee->location->status === 'active' ? $employee->location : null;
+        // Check if face is enrolled
+        $faceEnrolled = $employee->isFaceEnrolled();
+        
+        if (!$faceEnrolled) {
+            return redirect()->route('employee.face-enrollment.index')
+                ->with('warning', 'You must register your face before recording attendance.');
+        }
+
+        $locations = $employee->location && $employee->location->status === 'active' 
+            ? collect([$employee->location]) 
+            : collect([]);
         $todayAttendance = $this->getTodayAttendance($employee);
 
-        return view('employee.attendance.index', compact('location', 'todayAttendance'));
+        return view('employee.attendance.index', compact('locations', 'todayAttendance'));
     }
 
     public function record(Request $request)
@@ -74,7 +84,15 @@ class AttendanceController extends Controller
         $employee = Auth::user()->employee;
         $location = Location::find($request->location_id);
 
-        if (!$employee->locations->contains($location)) {
+        // Double check face enrollment before recording
+        if (!$employee->isFaceEnrolled()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You must register your face before recording attendance.'
+            ], 403);
+        }
+
+        if (!$employee->location || $employee->location->id !== $location->id) {
             $this->securityService->logSuspiciousActivity('Unauthorized location access', [
                 'employee_id' => $employee->id,
                 'location_id' => $request->location_id,
@@ -131,6 +149,9 @@ class AttendanceController extends Controller
                 $today = Carbon::today();
                 $now = Carbon::now();
 
+                // Determine attendance status based on employee's work schedule
+                $attendanceStatus = $employee->determineAttendanceStatus($now);
+                
                 $attendance = Attendance::firstOrCreate(
                     [
                         'employee_id' => $employee->id,
@@ -138,7 +159,7 @@ class AttendanceController extends Controller
                         'date' => $today,
                     ],
                     [
-                        'status' => 'present',
+                        'status' => $attendanceStatus,
                     ]
                 );
 
@@ -147,10 +168,14 @@ class AttendanceController extends Controller
                         throw new \Exception('You have already checked in today.');
                     }
 
+                    // Update status based on check-in time
+                    $checkInStatus = $employee->determineAttendanceStatus($now);
+                    
                     $attendance->update([
                         'check_in' => $now,
                         'check_in_lat' => $request->latitude,
                         'check_in_lng' => $request->longitude,
+                        'status' => $checkInStatus,
                     ]);
                 } else {
                     if (!$attendance->check_in) {

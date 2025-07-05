@@ -80,6 +80,14 @@ Route::middleware(['auth', 'employee', 'ensure.employee.profile'])->prefix('empl
         Route::get('history', [Employee\AttendanceController::class, 'history'])->name('history');
         Route::get('{attendance}', [Employee\AttendanceController::class, 'show'])->name('show');
     });
+    
+    // Face Enrollment
+    Route::prefix('face-enrollment')->name('face-enrollment.')->group(function () {
+        Route::get('/', [Employee\FaceEnrollmentController::class, 'index'])->name('index');
+        Route::post('/', [Employee\FaceEnrollmentController::class, 'store'])->name('store');
+        Route::get('status', [Employee\FaceEnrollmentController::class, 'status'])->name('status');
+        Route::delete('/', [Employee\FaceEnrollmentController::class, 'destroy'])->name('destroy');
+    });
 });
 
 Route::middleware(['auth'])->group(function () {

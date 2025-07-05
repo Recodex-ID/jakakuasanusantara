@@ -135,6 +135,38 @@
                             @endif
                         </div>
                     </div>
+
+                    <!-- Work Schedule -->
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Work Schedule</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Work Hours</span>
+                                    <span class="text-sm font-medium text-gray-900">
+                                        {{ \Carbon\Carbon::createFromFormat('H:i:s', $employee->work_start_time ?? '08:00:00')->format('H:i') }} - 
+                                        {{ \Carbon\Carbon::createFromFormat('H:i:s', $employee->work_end_time ?? '17:00:00')->format('H:i') }}
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Late Tolerance</span>
+                                    <span class="text-sm font-medium text-gray-900">{{ $employee->late_tolerance_minutes ?? 15 }} minutes</span>
+                                </div>
+                                <div class="flex items-start justify-between">
+                                    <span class="text-sm text-gray-600">Work Days</span>
+                                    <div class="text-right">
+                                        @if($employee->work_days)
+                                            @foreach($employee->getWorkDaysNames() as $day)
+                                                <span class="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded mr-1 mb-1">{{ $day }}</span>
+                                            @endforeach
+                                        @else
+                                            <span class="text-sm text-gray-500">Not configured</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Statistics & Actions -->

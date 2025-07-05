@@ -17,19 +17,12 @@
                         <div class="flex items-center space-x-3">
                             <a href="{{ route('employee.attendance.history') }}"
                                 class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
-                                    </path>
-                                </svg>
+                                <x-fas-clipboard-list class="w-5 h-5 mr-2" />
                                 Back to History
                             </a>
                             <a href="{{ route('employee.dashboard') }}"
                                 class="inline-flex items-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2V7z"></path>
-                                </svg>
+                                <x-fas-tachometer-alt class="w-5 h-5 mr-2" />
                                 Dashboard
                             </a>
                         </div>
@@ -147,12 +140,7 @@
                             <h3 class="text-lg font-semibold text-gray-900 mb-4">Activity Log</h3>
                             @if ($attendance->attendanceLogs->isEmpty())
                                 <div class="text-center py-8">
-                                    <svg class="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none"
-                                        stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
-                                        </path>
-                                    </svg>
+                                    <x-fas-clipboard-list class="w-12 h-12 mx-auto mb-2 text-gray-400" />
                                     <p class="text-gray-500">No activity logs available</p>
                                 </div>
                             @else
@@ -163,24 +151,12 @@
                                                 @if ($log->action === 'check_in')
                                                     <div
                                                         class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                                        <svg class="w-4 h-4 text-green-600" fill="none"
-                                                            stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
-                                                            </path>
-                                                        </svg>
+                                                        <x-fas-sign-in-alt class="w-4 h-4 text-green-600" />
                                                     </div>
                                                 @else
                                                     <div
                                                         class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                                                        <svg class="w-4 h-4 text-red-600" fill="none"
-                                                            stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
-                                                            </path>
-                                                        </svg>
+                                                        <x-fas-sign-out-alt class="w-4 h-4 text-red-600" />
                                                     </div>
                                                 @endif
                                             </div>
@@ -289,46 +265,26 @@
                                 @if ($attendance->date->isToday() && $attendance->check_in && !$attendance->check_out)
                                     <a href="{{ route('employee.attendance.index') }}"
                                         class="w-full flex items-center justify-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
-                                            </path>
-                                        </svg>
+                                        <x-fas-sign-out-alt class="w-5 h-5 mr-2" />
                                         Check Out Now
                                     </a>
                                 @elseif($attendance->date->isToday() && !$attendance->check_in)
                                     <a href="{{ route('employee.attendance.index') }}"
                                         class="w-full flex items-center justify-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors">
-                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
-                                            </path>
-                                        </svg>
+                                        <x-fas-sign-in-alt class="w-5 h-5 mr-2" />
                                         Check In Now
                                     </a>
                                 @endif
 
                                 <a href="{{ route('employee.attendance.history') }}"
                                     class="w-full flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
-                                        </path>
-                                    </svg>
+                                    <x-fas-clipboard-list class="w-5 h-5 mr-2" />
                                     View All History
                                 </a>
 
                                 <a href="{{ route('employee.dashboard') }}"
                                     class="w-full flex items-center justify-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2V7z">
-                                        </path>
-                                    </svg>
+                                    <x-fas-tachometer-alt class="w-5 h-5 mr-2" />
                                     Dashboard
                                 </a>
                             </div>

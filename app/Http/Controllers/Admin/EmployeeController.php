@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\Location;
 use App\Models\User;
+use App\Services\FaceApiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -13,6 +14,12 @@ use Illuminate\Validation\Rule;
 
 class EmployeeController extends Controller
 {
+    protected FaceApiService $faceApiService;
+
+    public function __construct(FaceApiService $faceApiService)
+    {
+        $this->faceApiService = $faceApiService;
+    }
 
     public function index(Request $request)
     {
@@ -35,7 +42,29 @@ class EmployeeController extends Controller
 
         $employees = $query->paginate(15);
 
+        // Check face enrollment status for each employee
+        $enrolledFaces = $this->getEnrolledFaces();
+        
+        foreach ($employees as $employee) {
+            $employee->face_enrolled = in_array($employee->employee_id, $enrolledFaces);
+        }
+
         return view('admin.employees.index', compact('employees'));
+    }
+
+    private function getEnrolledFaces(): array
+    {
+        try {
+            $response = $this->faceApiService->listAllFaces();
+            
+            if (isset($response['status']) && $response['status'] === '200' && isset($response['faces'])) {
+                return array_column($response['faces'], 'user_id');
+            }
+        } catch (\Exception $e) {
+            // If face API is unavailable, return empty array
+        }
+        
+        return [];
     }
 
     public function create()
@@ -59,6 +88,11 @@ class EmployeeController extends Controller
             'date_of_birth' => 'nullable|date',
             'gender' => 'nullable|in:male,female',
             'location_id' => 'nullable|exists:locations,id',
+            'work_start_time' => 'nullable|date_format:H:i',
+            'work_end_time' => 'nullable|date_format:H:i|after:work_start_time',
+            'late_tolerance_minutes' => 'nullable|integer|min:0|max:60',
+            'work_days' => 'nullable|array',
+            'work_days.*' => 'in:0,1,2,3,4,5,6',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -80,6 +114,10 @@ class EmployeeController extends Controller
                 'address' => $request->address,
                 'date_of_birth' => $request->date_of_birth,
                 'gender' => $request->gender,
+                'work_start_time' => $request->work_start_time ?: '08:00',
+                'work_end_time' => $request->work_end_time ?: '17:00',
+                'late_tolerance_minutes' => $request->late_tolerance_minutes ?: 15,
+                'work_days' => $request->work_days ?: ['1', '2', '3', '4', '5'],
             ]);
 
         });
@@ -112,8 +150,7 @@ class EmployeeController extends Controller
                 ->whereNull('check_in')
                 ->count(),
             'total_late' => $employee->attendances()
-                ->whereNotNull('check_in')
-                ->whereRaw('TIME(check_in) > "09:00:00"')
+                ->where('status', 'late')
                 ->count(),
         ];
 
@@ -144,6 +181,11 @@ class EmployeeController extends Controller
             'gender' => 'nullable|in:male,female',
             'status' => 'required|in:active,inactive',
             'location_id' => 'nullable|exists:locations,id',
+            'work_start_time' => 'nullable|date_format:H:i',
+            'work_end_time' => 'nullable|date_format:H:i|after:work_start_time',
+            'late_tolerance_minutes' => 'nullable|integer|min:0|max:60',
+            'work_days' => 'nullable|array',
+            'work_days.*' => 'in:0,1,2,3,4,5,6',
         ]);
 
         DB::transaction(function () use ($request, $employee) {
@@ -169,6 +211,10 @@ class EmployeeController extends Controller
                 'date_of_birth' => $request->date_of_birth,
                 'gender' => $request->gender,
                 'status' => $request->status,
+                'work_start_time' => $request->work_start_time,
+                'work_end_time' => $request->work_end_time,
+                'late_tolerance_minutes' => $request->late_tolerance_minutes,
+                'work_days' => $request->work_days ?: [],
             ]);
 
         });

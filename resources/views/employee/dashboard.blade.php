@@ -4,6 +4,45 @@
     <!-- Flash Messages -->
     <x-flash-messages />
 
+    <!-- Face Enrollment Alert -->
+    @if(!$faceEnrolled)
+        <div class="py-4">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg shadow-sm">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <x-fas-exclamation-triangle class="h-5 w-5 text-yellow-400" />
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h3 class="text-sm font-medium text-yellow-800">
+                                Face Recognition Setup Required
+                            </h3>
+                            <div class="mt-2 text-sm text-yellow-700">
+                                <p>You need to register your face before you can record attendance. This is required for our face recognition attendance system.</p>
+                            </div>
+                            <div class="mt-4">
+                                <div class="flex space-x-2">
+                                    <a href="{{ route('employee.face-enrollment.index') }}" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                        Register Face Now
+                                    </a>
+                                    <button onclick="dismissAlert()" class="bg-white hover:bg-gray-50 text-yellow-800 px-3 py-2 rounded-md text-sm font-medium border border-yellow-200 transition-colors">
+                                        Remind Later
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0 ml-4">
+                            <button onclick="dismissAlert()" class="bg-yellow-50 rounded-md inline-flex text-yellow-400 hover:text-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-50 focus:ring-yellow-600">
+                                <span class="sr-only">Close</span>
+                                <x-fas-times class="h-5 w-5" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Dashboard Header -->
@@ -89,11 +128,7 @@
                         </div>
                     @else
                         <div class="text-center py-8">
-                            <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
+                            <x-fas-clock class="w-16 h-16 mx-auto mb-4 text-gray-400" />
                             <h3 class="text-lg font-medium text-gray-900 mb-2">No attendance recorded today</h3>
                             <p class="text-gray-500 mb-4">Start your day by checking in at your assigned location.</p>
                             <a href="{{ route('employee.attendance.index') }}"
@@ -113,27 +148,17 @@
                         <div class="space-y-3">
                             <a href="{{ route('employee.attendance.index') }}"
                                 class="w-full flex items-center justify-center px-4 py-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium rounded-lg transition-colors">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
+                                <x-fas-clock class="w-5 h-5 mr-2" />
                                 Record Attendance
                             </a>
                             <a href="{{ route('employee.attendance.history') }}"
                                 class="w-full flex items-center justify-center px-4 py-3 bg-green-50 hover:bg-green-100 text-green-700 font-medium rounded-lg transition-colors">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
-                                    </path>
-                                </svg>
+                                <x-fas-clipboard-list class="w-5 h-5 mr-2" />
                                 View History
                             </a>
-                            <a href="{{ route('profile.edit') }}"
+                            <a href="{{ route('settings.profile.edit') }}"
                                 class="w-full flex items-center justify-center px-4 py-3 bg-purple-50 hover:bg-purple-100 text-purple-700 font-medium rounded-lg transition-colors">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
+                                <x-fas-user class="w-5 h-5 mr-2" />
                                 Update Profile
                             </a>
                         </div>
@@ -143,37 +168,26 @@
                 <!-- Assigned Locations -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Locations</h3>
-                        @if ($employee->locations->isEmpty())
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Location</h3>
+                        @if (!$employee->location)
                             <div class="text-center py-4">
-                                <svg class="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
-                                    </path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>
-                                <p class="text-gray-500 text-sm">No locations assigned</p>
+                                <x-fas-map-marker-alt class="w-12 h-12 mx-auto mb-2 text-gray-400" />
+                                <p class="text-gray-500 text-sm">No location assigned</p>
                             </div>
                         @else
-                            <div class="space-y-3">
-                                @foreach ($employee->locations as $location)
-                                    <div class="p-3 bg-gray-50 rounded-lg">
-                                        <div class="flex items-center justify-between">
-                                            <div>
-                                                <h4 class="font-medium text-gray-900">{{ $location->name }}</h4>
-                                                <p class="text-sm text-gray-600">
-                                                    {{ Str::limit($location->address, 30) }}</p>
-                                            </div>
-                                            <span
-                                                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
-                                                         {{ $location->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                                {{ ucfirst($location->status) }}
-                                            </span>
-                                        </div>
+                            <div class="p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">{{ $employee->location->name }}</h4>
+                                        <p class="text-sm text-gray-600">
+                                            {{ Str::limit($employee->location->address, 30) }}</p>
                                     </div>
-                                @endforeach
+                                    <span
+                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                                                 {{ $employee->location->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                        {{ ucfirst($employee->location->status) }}
+                                    </span>
+                                </div>
                             </div>
                         @endif
                     </div>
@@ -216,12 +230,7 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
                     @if ($recentAttendances->isEmpty())
                         <div class="text-center py-8">
-                            <svg class="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
-                                </path>
-                            </svg>
+                            <x-fas-clipboard-list class="w-12 h-12 mx-auto mb-2 text-gray-400" />
                             <p class="text-gray-500">No recent activity</p>
                         </div>
                     @else
@@ -233,30 +242,17 @@
                                             @if ($attendance->status === 'present')
                                                 <div
                                                     class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                                    <svg class="w-4 h-4 text-green-600" fill="none"
-                                                        stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                    </svg>
+                                                    <x-fas-check class="w-4 h-4 text-green-600" />
                                                 </div>
                                             @elseif($attendance->status === 'late')
                                                 <div
                                                     class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                                                    <svg class="w-4 h-4 text-yellow-600" fill="none"
-                                                        stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                    </svg>
+                                                    <x-fas-clock class="w-4 h-4 text-yellow-600" />
                                                 </div>
                                             @else
                                                 <div
                                                     class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                                                    <svg class="w-4 h-4 text-red-600" fill="none"
-                                                        stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                    </svg>
+                                                    <x-fas-times class="w-4 h-4 text-red-600" />
                                                 </div>
                                             @endif
                                         </div>
@@ -315,5 +311,25 @@
                 timeDisplay.textContent = timeString;
             }
         }, 1000);
+
+        // Dismiss alert function
+        function dismissAlert() {
+            const alert = document.querySelector('.bg-yellow-50');
+            if (alert) {
+                alert.style.display = 'none';
+                // Store dismissal in session storage to not show again during this session
+                sessionStorage.setItem('faceEnrollmentAlertDismissed', 'true');
+            }
+        }
+
+        // Check if alert was dismissed in this session
+        document.addEventListener('DOMContentLoaded', function() {
+            if (sessionStorage.getItem('faceEnrollmentAlertDismissed') === 'true') {
+                const alert = document.querySelector('.bg-yellow-50');
+                if (alert) {
+                    alert.style.display = 'none';
+                }
+            }
+        });
     </script>
 </x-layouts.app>
