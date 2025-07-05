@@ -226,8 +226,9 @@
                             Processing Information
                         </h4>
                         <ul class="text-sm text-blue-700 space-y-1">
-                            <li>• Image is optimized to 640x480 for faster upload</li>
-                            <li>• External API processing may take 15-30 seconds</li>
+                            <li>• Image is optimized to 480x360 for faster upload</li>
+                            <li>• <strong>Expected processing time: 10-25 seconds</strong></li>
+                            <li>• Time depends on internet speed and API load</li>
                             <li>• Please wait for the process to complete</li>
                             <li>• Don't refresh the page during enrollment</li>
                         </ul>
@@ -294,9 +295,9 @@
             const canvas = document.getElementById('canvas');
             const context = canvas.getContext('2d');
 
-            // Optimize image size for better performance
-            const maxWidth = 640;
-            const maxHeight = 480;
+            // Optimize image size for better performance - more aggressive compression
+            const maxWidth = 480;  // Reduced from 640
+            const maxHeight = 360; // Reduced from 480
             let { videoWidth, videoHeight } = video;
             
             // Calculate scaled dimensions
@@ -312,7 +313,7 @@
 
             // Show preview with optimized quality
             const capturedImage = document.getElementById('capturedImage');
-            capturedImageData = canvas.toDataURL('image/jpeg', 0.7); // Reduced quality for faster upload
+            capturedImageData = canvas.toDataURL('image/jpeg', 0.6); // More aggressive compression
             capturedImage.src = capturedImageData;
             document.getElementById('photoPreview').classList.remove('hidden');
 
@@ -345,6 +346,10 @@
             }
 
             const base64data = capturedImageData.split(',')[1];
+            
+            // Debug: Log image size for optimization
+            console.log('Image size (KB):', Math.round(base64data.length * 0.75 / 1024));
+            console.log('Image dimensions:', canvas.width + 'x' + canvas.height);
 
             // Show progressive loading states
             const enrollBtn = document.getElementById('enrollBtn');
@@ -397,14 +402,15 @@
                     enrollBtn.innerHTML = originalText;
 
                     if (data.success) {
-                        // Success notification
+                        // Success notification with processing time
+                        const processingTime = data.processing_time_ms ? ` (${Math.round(data.processing_time_ms/1000)}s)` : '';
                         const successDiv = document.createElement('div');
                         successDiv.className =
                             'fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg z-50';
                         successDiv.innerHTML = `
                         <div class="flex items-center">
                             <x-fas-check-circle class="w-5 h-5 mr-2" />
-                            <span>Face enrolled successfully!</span>
+                            <span>Face enrolled successfully!${processingTime}</span>
                         </div>
                     `;
                         document.body.appendChild(successDiv);

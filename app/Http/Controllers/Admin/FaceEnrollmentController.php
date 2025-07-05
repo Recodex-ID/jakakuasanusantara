@@ -37,11 +37,20 @@ class FaceEnrollmentController extends Controller
         ]);
 
         try {
+            $startTime = microtime(true);
+            Log::info('Face enrollment started', [
+                'employee_id' => $employee->employee_id,
+                'timestamp' => now()
+            ]);
+
             $response = $this->faceApiService->enrollEmployeeFace(
                 $employee->employee_id,
                 $employee->user->name,
                 $request->face_image
             );
+
+            $endTime = microtime(true);
+            $processingTime = round(($endTime - $startTime) * 1000); // in milliseconds
 
             if ($response['status'] === '200') {
                 // Update employee face_enrolled status
@@ -50,12 +59,14 @@ class FaceEnrollmentController extends Controller
                 Log::info('Employee face enrolled successfully', [
                     'employee_id' => $employee->employee_id,
                     'employee_name' => $employee->user->name,
-                    'gallery_id' => $this->faceApiService->getGalleryId()
+                    'gallery_id' => $this->faceApiService->getGalleryId(),
+                    'processing_time_ms' => $processingTime
                 ]);
 
                 return response()->json([
                     'success' => true,
                     'message' => 'Face enrolled successfully.',
+                    'processing_time_ms' => $processingTime,
                     'data' => $response
                 ]);
             } else {
