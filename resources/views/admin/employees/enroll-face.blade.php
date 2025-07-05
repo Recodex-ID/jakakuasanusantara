@@ -104,15 +104,16 @@
                                 </div>
                             </div>
 
-                            <!-- Gallery Selection -->
-                            <div class="mt-6">
-                                <x-forms.select label="Face Gallery" name="gallery_id" id="gallerySelect"
-                                    placeholder="Select Gallery" :options="[
-                                        'default_gallery' => 'Default Gallery',
-                                        'main_gallery' => 'Main Gallery',
-                                        'backup_gallery' => 'Backup Gallery',
-                                    ]" selected="default_gallery" />
-                                <p class="text-sm text-gray-500 mt-1">Choose which gallery to enroll the face into</p>
+                            <!-- Gallery Info -->
+                            <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <h4 class="font-medium text-blue-800 mb-2">
+                                    <x-fas-info-circle class="w-4 h-4 mr-1 inline" />
+                                    Face Gallery Information
+                                </h4>
+                                <p class="text-sm text-blue-700">
+                                    Face will be enrolled to the main system gallery: 
+                                    <span class="font-mono font-medium">{{ config('services.biznet_face.gallery_id') }}</span>
+                                </p>
                             </div>
 
                             <!-- Enrollment Button -->
@@ -316,7 +317,6 @@
                 return;
             }
 
-            const galleryId = document.getElementById('gallerySelect').value;
             const base64data = capturedImageData.split(',')[1];
 
             // Show loading state
@@ -338,8 +338,7 @@
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
                     body: JSON.stringify({
-                        face_image: base64data,
-                        gallery_id: galleryId
+                        face_image: base64data
                     })
                 })
                 .then(response => response.json())

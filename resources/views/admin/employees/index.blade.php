@@ -91,7 +91,7 @@
                                             <div class="flex-shrink-0 h-10 w-10">
                                                 <div
                                                     class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                                                    <span class="text-sm font-bold text-blue-500">
+                                                    <span class="text-sm font-bold text-blue-600">
                                                         {{ $employee->user->initials() }}
                                                     </span>
                                                 </div>

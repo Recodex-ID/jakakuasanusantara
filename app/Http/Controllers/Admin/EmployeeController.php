@@ -203,18 +203,19 @@ class EmployeeController extends Controller
     {
         $request->validate([
             'face_image' => 'required|string',
-            'gallery_id' => 'required|string',
         ]);
 
         try {
-            $response = $this->faceApiService->enrollFace(
+            $response = $this->faceApiService->enrollEmployeeFace(
                 $employee->employee_id,
                 $employee->user->name,
-                $request->gallery_id,
                 $request->face_image
             );
 
             if ($response['status'] === '200') {
+                // Update employee face_enrolled status
+                $employee->update(['face_enrolled' => true]);
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Face enrolled successfully.',

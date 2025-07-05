@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\AttendanceLog;
 use App\Models\Employee;
-use App\Models\FaceGallery;
 use App\Models\Location;
 use App\Rules\ValidBase64Image;
 use App\Rules\ValidCoordinates;
@@ -358,36 +357,25 @@ class AttendanceController extends Controller
     private function verifyFace($employee, $faceImage)
     {
         try {
-            $availableGalleries = FaceGallery::whereHas('location', function ($query) use ($employee) {
-                $query->whereIn('id', $employee->locations->pluck('id'));
-            })->where('status', 'active')->get();
+            // Use employee ID for verification with the configured gallery
+            $response = $this->faceApiService->verifyEmployeeFace(
+                $employee->employee_id,
+                $faceImage
+            );
 
-            if ($availableGalleries->isEmpty()) {
+            if ($response['status'] === '200' && isset($response['verified']) && $response['verified']) {
                 return [
-                    'success' => false,
-                    'message' => 'No face galleries available for your assigned locations.'
+                    'success' => true,
+                    'similarity' => $response['similarity'] ?? 0,
+                    'gallery_id' => $this->faceApiService->getGalleryId(),
+                    'api_response' => $response
                 ];
-            }
-
-            foreach ($availableGalleries as $gallery) {
-                $response = $this->faceApiService->verifyFace(
-                    $gallery->gallery_id,
-                    $faceImage
-                );
-
-                if ($response['status'] === '200' && isset($response['verified']) && $response['verified']) {
-                    return [
-                        'success' => true,
-                        'similarity' => $response['similarity'] ?? 0,
-                        'gallery_id' => $gallery->gallery_id,
-                        'api_response' => $response
-                    ];
-                }
             }
 
             return [
                 'success' => false,
-                'message' => 'Face verification failed. Please ensure your face is clearly visible and try again.'
+                'message' => 'Face verification failed. Please ensure your face is clearly visible and try again.',
+                'api_response' => $response
             ];
 
         } catch (\Exception $e) {

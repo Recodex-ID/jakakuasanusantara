@@ -40,6 +40,7 @@ return [
         'token' => env('BIZNET_FACE_API_TOKEN'),
         'timeout' => env('BIZNET_FACE_API_TIMEOUT', 30),
         'similarity_threshold' => env('BIZNET_FACE_SIMILARITY_THRESHOLD', 0.75),
+        'gallery_id' => env('BIZNET_FACE_GALLERY_ID', 'main_gallery'),
     ],
 
 ];
