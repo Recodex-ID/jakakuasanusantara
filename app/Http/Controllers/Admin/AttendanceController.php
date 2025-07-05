@@ -200,6 +200,16 @@ class AttendanceController extends Controller
         return view('admin.attendances.monitor', compact('todayAttendances', 'recentLogs', 'stats'));
     }
 
+    public function employee(Employee $employee)
+    {
+        $attendances = Attendance::with(['location', 'attendanceLogs'])
+            ->where('employee_id', $employee->id)
+            ->orderBy('date', 'desc')
+            ->paginate(20);
+
+        return view('admin.attendances.employee', compact('employee', 'attendances'));
+    }
+
     public function bulkUpdate(Request $request)
     {
         $request->validate([
