@@ -8,7 +8,7 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h1 class="text-2xl font-bold text-gray-900">{{ $employee->full_name }}</h1>
+                            <h1 class="text-2xl font-bold text-gray-900">{{ $employee->user->name }}</h1>
                             <p class="text-gray-600">Employee ID: {{ $employee->employee_id }}</p>
                         </div>
                         <div class="flex items-center space-x-3">
@@ -37,7 +37,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Full Name</label>
-                                    <p class="mt-1 text-sm text-gray-900">{{ $employee->full_name }}</p>
+                                    <p class="mt-1 text-sm text-gray-900">{{ $employee->user->name }}</p>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Employee ID</label>

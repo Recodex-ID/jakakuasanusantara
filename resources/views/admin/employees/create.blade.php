@@ -66,11 +66,6 @@
                                         placeholder="e.g., EMP001" value="{{ old('employee_id') }}" required />
                                 </div>
 
-                                <div>
-                                    <x-forms.input label="Full Name (as per ID) *" name="full_name" type="text"
-                                        placeholder="Enter full name as per ID" value="{{ old('full_name') }}"
-                                        required />
-                                </div>
 
                                 <div>
                                     <x-forms.input label="Phone Number" name="phone" type="text"
@@ -152,13 +147,6 @@
     </div>
 
     <script>
-        // Auto-copy name to full_name if empty
-        document.getElementById('name').addEventListener('input', function(e) {
-            const fullNameField = document.getElementById('full_name');
-            if (!fullNameField.value.trim()) {
-                fullNameField.value = e.target.value;
-            }
-        });
 
         // Phone number formatting
         document.getElementById('phone').addEventListener('input', function(e) {

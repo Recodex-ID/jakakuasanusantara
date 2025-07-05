@@ -202,7 +202,7 @@
                                         </div>
                                         <div>
                                             <div class="text-sm font-medium text-gray-900">
-                                                {{ $attendance->employee->full_name }}</div>
+                                                {{ $attendance->employee->user->name }}</div>
                                             <div class="text-sm text-gray-500">{{ $attendance->location->name }} •
                                                 {{ $attendance->date->format('M j, Y') }}</div>
                                         </div>

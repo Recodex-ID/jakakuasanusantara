@@ -222,7 +222,7 @@
                                             </div>
                                             <div class="ml-4">
                                                 <div class="text-sm font-medium text-gray-900">
-                                                    {{ $attendance->employee->full_name }}
+                                                    {{ $attendance->employee->user->name }}
                                                 </div>
                                                 <div class="text-sm text-gray-500">
                                                     {{ $attendance->employee->employee_id }}

@@ -1,5 +1,5 @@
 <x-layouts.app>
-    <x-slot name="title">Face Enrollment - {{ $employee->full_name }}</x-slot>
+    <x-slot name="title">Face Enrollment - {{ $employee->user->name }}</x-slot>
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -9,7 +9,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h1 class="text-2xl font-bold text-gray-900">Face Enrollment</h1>
-                            <p class="text-gray-600">Register face recognition for {{ $employee->full_name }}</p>
+                            <p class="text-gray-600">Register face recognition for {{ $employee->user->name }}</p>
                         </div>
                         <div class="flex items-center space-x-3">
                             <a href="{{ route('admin.employees.show', $employee) }}"
@@ -141,7 +141,7 @@
                                     </span>
                                 </div>
                                 <div>
-                                    <h4 class="font-medium text-gray-900">{{ $employee->full_name }}</h4>
+                                    <h4 class="font-medium text-gray-900">{{ $employee->user->name }}</h4>
                                     <p class="text-sm text-gray-500">{{ $employee->employee_id }}</p>
                                 </div>
                             </div>

@@ -271,7 +271,7 @@ class AttendanceController extends Controller
 
             // CSV Headers
             fputcsv($file, [
-                'Attendance Report - ' . $employee->full_name
+                'Attendance Report - ' . $employee->user->name
             ]);
             fputcsv($file, []); // Empty row
 

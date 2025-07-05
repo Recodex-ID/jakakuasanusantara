@@ -8,7 +8,7 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h1 class="text-2xl font-bold text-gray-900">Welcome, {{ $employee->full_name }}!</h1>
+                            <h1 class="text-2xl font-bold text-gray-900">Welcome, {{ $employee->user->name }}!</h1>
                             <p class="text-gray-600">{{ $employee->department ?? 'Employee' }} •
                                 {{ $employee->position ?? $employee->employee_id }}</p>
                         </div>

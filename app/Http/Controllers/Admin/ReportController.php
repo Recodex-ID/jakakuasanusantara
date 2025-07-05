@@ -257,7 +257,7 @@ class ReportController extends Controller
                 fputcsv($file, [
                     $attendance->date->format('Y-m-d'),
                     $attendance->employee->employee_id,
-                    $attendance->employee->full_name,
+                    $attendance->employee->user->name,
                     $attendance->location->name,
                     $attendance->check_in?->format('H:i'),
                     $attendance->check_out?->format('H:i'),

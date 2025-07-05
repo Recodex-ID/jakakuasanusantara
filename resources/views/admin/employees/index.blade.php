@@ -95,7 +95,7 @@
                                             </div>
                                             <div class="ml-4">
                                                 <div class="text-sm font-medium text-gray-900">
-                                                    {{ $employee->full_name }}
+                                                    {{ $employee->user->name }}
                                                 </div>
                                                 <div class="text-sm text-gray-500">
                                                     {{ $employee->user->username }}
