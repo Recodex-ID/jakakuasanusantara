@@ -39,23 +39,31 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">User Account Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <x-forms.input label="Full Name *" name="name" type="text" placeholder="Enter full name" value="{{ old('name', $employee->user->name) }}" required />
+                                    <x-forms.input label="Full Name *" name="name" type="text"
+                                        placeholder="Enter full name" value="{{ old('name', $employee->user->name) }}"
+                                        required />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Email Address *" name="email" type="email" placeholder="your@email.com" value="{{ old('email', $employee->user->email) }}" required />
+                                    <x-forms.input label="Email Address *" name="email" type="email"
+                                        placeholder="your@email.com" value="{{ old('email', $employee->user->email) }}"
+                                        required />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Username *" name="username" type="text" placeholder="Enter username" value="{{ old('username', $employee->user->username) }}" required />
+                                    <x-forms.input label="Username *" name="username" type="text"
+                                        placeholder="Enter username"
+                                        value="{{ old('username', $employee->user->username) }}" required />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="New Password (leave blank to keep current)" name="password" type="password" placeholder="••••••••" />
+                                    <x-forms.input label="New Password (leave blank to keep current)" name="password"
+                                        type="password" placeholder="••••••••" />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Confirm New Password" name="password_confirmation" type="password" placeholder="••••••••" />
+                                    <x-forms.input label="Confirm New Password" name="password_confirmation"
+                                        type="password" placeholder="••••••••" />
                                 </div>
                             </div>
                         </div>
@@ -65,43 +73,52 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Employee Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <x-forms.input label="Employee ID *" name="employee_id" type="text" placeholder="e.g., EMP001" value="{{ old('employee_id', $employee->employee_id) }}" required />
+                                    <x-forms.input label="Employee ID *" name="employee_id" type="text"
+                                        placeholder="e.g., EMP001"
+                                        value="{{ old('employee_id', $employee->employee_id) }}" required />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="NIK (National ID) *" name="nik" type="text" placeholder="16-digit NIK" value="{{ old('nik', $employee->nik) }}" maxlength="16" required />
+                                    <x-forms.input label="Full Name (as per ID) *" name="full_name" type="text"
+                                        placeholder="Enter full name as per ID"
+                                        value="{{ old('full_name', $employee->full_name) }}" required />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Full Name (as per ID) *" name="full_name" type="text" placeholder="Enter full name as per ID" value="{{ old('full_name', $employee->full_name) }}" required />
+                                    <x-forms.input label="Phone Number" name="phone" type="text"
+                                        placeholder="e.g., +62812345678" value="{{ old('phone', $employee->phone) }}" />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Phone Number" name="phone" type="text" placeholder="e.g., +62812345678" value="{{ old('phone', $employee->phone) }}" />
+                                    <x-forms.input label="Department" name="department" type="text"
+                                        placeholder="e.g., Information Technology"
+                                        value="{{ old('department', $employee->department) }}" />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Department" name="department" type="text" placeholder="e.g., Information Technology" value="{{ old('department', $employee->department) }}" />
+                                    <x-forms.input label="Position" name="position" type="text"
+                                        placeholder="e.g., Software Developer"
+                                        value="{{ old('position', $employee->position) }}" />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Position" name="position" type="text" placeholder="e.g., Software Developer" value="{{ old('position', $employee->position) }}" />
+                                    <x-forms.input label="Date of Birth" name="date_of_birth" type="date"
+                                        value="{{ old('date_of_birth', $employee->date_of_birth?->format('Y-m-d')) }}" />
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="Date of Birth" name="date_of_birth" type="date" value="{{ old('date_of_birth', $employee->date_of_birth?->format('Y-m-d')) }}" />
+                                    <x-forms.select label="Gender" name="gender" placeholder="Select Gender"
+                                        :options="['male' => 'Male', 'female' => 'Female']" :selected="old('gender', $employee->gender)" />
                                 </div>
 
                                 <div>
-                                    <x-forms.select label="Gender" name="gender" placeholder="Select Gender" :options="['male' => 'Male', 'female' => 'Female']" :selected="old('gender', $employee->gender)" />
-                                </div>
-
-                                <div>
-                                    <x-forms.select label="Status *" name="status" :options="['active' => 'Active', 'inactive' => 'Inactive']" :selected="old('status', $employee->status)" required />
+                                    <x-forms.select label="Status *" name="status" :options="['active' => 'Active', 'inactive' => 'Inactive']" :selected="old('status', $employee->status)"
+                                        required />
                                 </div>
 
                                 <div class="md:col-span-2">
-                                    <x-forms.textarea label="Address" name="address" placeholder="Enter full address..." rows="3" value="{{ old('address', $employee->address) }}" />
+                                    <x-forms.textarea label="Address" name="address" placeholder="Enter full address..."
+                                        rows="3" value="{{ old('address', $employee->address) }}" />
                                 </div>
                             </div>
                         </div>
@@ -154,12 +171,6 @@
     </div>
 
     <script>
-        // Auto-format NIK input
-        document.getElementById('nik').addEventListener('input', function(e) {
-            const value = e.target.value.replace(/\D/g, '');
-            e.target.value = value.substring(0, 16);
-        });
-
         // Auto-copy name to full_name if full_name is empty
         document.getElementById('name').addEventListener('input', function(e) {
             const fullNameField = document.getElementById('full_name');

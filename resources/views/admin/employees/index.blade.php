@@ -27,7 +27,7 @@
                         class="flex flex-wrap gap-4 items-end">
                         <div class="flex-1 min-w-64">
                             <x-forms.input label="Search" name="search" type="text"
-                                placeholder="Search by name, employee ID, NIK, or department..."
+                                placeholder="Search by name, employee ID, or department..."
                                 value="{{ request('search') }}" />
                         </div>
                         <div class="min-w-32">
@@ -60,7 +60,7 @@
                                 </th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Employee ID / NIK
+                                    Employee ID
                                 </th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -88,7 +88,7 @@
                                             <div class="flex-shrink-0 h-10 w-10">
                                                 <div
                                                     class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                                                    <span class="text-sm font-medium text-blue-900">
+                                                    <span class="text-sm font-bold text-blue-500">
                                                         {{ $employee->user->initials() }}
                                                     </span>
                                                 </div>
@@ -108,7 +108,6 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{ $employee->employee_id }}</div>
-                                        <div class="text-sm text-gray-500">{{ $employee->nik }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{ $employee->department ?? '-' }}</div>

@@ -155,10 +155,6 @@
                                     <span class="text-gray-600">Position:</span>
                                     <span class="text-gray-900">{{ $employee->position ?? '-' }}</span>
                                 </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">NIK:</span>
-                                    <span class="text-gray-900">{{ $employee->nik }}</span>
-                                </div>
                             </div>
                         </div>
                     </div>

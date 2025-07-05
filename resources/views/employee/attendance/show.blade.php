@@ -263,13 +263,6 @@
                                     <label class="block text-sm font-medium text-gray-700">Address</label>
                                     <p class="mt-1 text-sm text-gray-900">{{ $attendance->location->address }}</p>
                                 </div>
-                                @if ($attendance->location->description)
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Description</label>
-                                        <p class="mt-1 text-sm text-gray-900">{{ $attendance->location->description }}
-                                        </p>
-                                    </div>
-                                @endif
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Coordinates</label>
                                     <p class="mt-1 text-sm text-gray-900">

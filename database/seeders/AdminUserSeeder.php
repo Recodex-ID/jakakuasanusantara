@@ -15,12 +15,12 @@ class AdminUserSeeder extends Seeder
     {
         // Create default admin user
         User::firstOrCreate(
-            ['email' => 'admin@jakakuasanusantara.web.id'],
+            ['email' => 'zachranraze@recodex.id'],
             [
-                'name' => 'Administrator',
-                'email' => 'admin@jakakuasanusantara.web.id',
-                'username' => 'admin',
-                'password' => Hash::make('password123'),
+                'name' => 'Zachran Razendra',
+                'email' => 'zachranraze@recodex.id',
+                'username' => 'zachranraze',
+                'password' => Hash::make('admin123'),
                 'role' => 'admin',
                 'email_verified_at' => now(),
             ]
@@ -43,7 +43,6 @@ class AdminUserSeeder extends Seeder
         if ($employeeUser && !$employeeUser->employee) {
             $employeeUser->employee()->create([
                 'employee_id' => 'EMP001',
-                'nik' => '1234567890123456',
                 'full_name' => 'Demo Employee',
                 'department' => 'Information Technology',
                 'position' => 'Software Developer',
@@ -54,9 +53,5 @@ class AdminUserSeeder extends Seeder
                 'status' => 'active',
             ]);
         }
-
-        $this->command->info('Admin and demo users created successfully!');
-        $this->command->info('Admin: admin@jakakuasanusantara.web.id / password123');
-        $this->command->info('Employee: employee@jakakuasanusantara.web.id / password123');
     }
 }

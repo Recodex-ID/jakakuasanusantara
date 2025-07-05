@@ -44,10 +44,6 @@
                                     <p class="mt-1 text-sm text-gray-900">{{ $employee->employee_id }}</p>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">NIK</label>
-                                    <p class="mt-1 text-sm text-gray-900">{{ $employee->nik }}</p>
-                                </div>
-                                <div>
                                     <label class="block text-sm font-medium text-gray-700">Email</label>
                                     <p class="mt-1 text-sm text-gray-900">{{ $employee->user->email }}</p>
                                 </div>

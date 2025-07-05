@@ -32,7 +32,7 @@ class AttendanceController extends Controller
     public function index()
     {
         $employee = Auth::user()->employee;
-        
+
         if (!$employee) {
             return redirect()->route('dashboard')
                 ->with('error', 'Employee profile not found.');
@@ -95,10 +95,12 @@ class AttendanceController extends Controller
         }
 
         // Check for suspicious location jumping
-        if ($this->securityService->detectMultipleLocationAttempts($employee->id, [
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-        ])) {
+        if (
+            $this->securityService->detectMultipleLocationAttempts($employee->id, [
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+            ])
+        ) {
             $this->securityService->logSuspiciousActivity('Suspicious location jumping detected', [
                 'employee_id' => $employee->id,
                 'current_location' => ['lat' => $request->latitude, 'lng' => $request->longitude],
@@ -121,7 +123,7 @@ class AttendanceController extends Controller
 
         try {
             $faceVerification = $this->verifyFace($employee, $request->face_image);
-            
+
             if (!$faceVerification['success']) {
                 return response()->json($faceVerification, 422);
             }
@@ -145,7 +147,7 @@ class AttendanceController extends Controller
                     if ($attendance->check_in) {
                         throw new \Exception('You have already checked in today.');
                     }
-                    
+
                     $attendance->update([
                         'check_in' => $now,
                         'check_in_lat' => $request->latitude,
@@ -155,11 +157,11 @@ class AttendanceController extends Controller
                     if (!$attendance->check_in) {
                         throw new \Exception('You must check in first before checking out.');
                     }
-                    
+
                     if ($attendance->check_out) {
                         throw new \Exception('You have already checked out today.');
                     }
-                    
+
                     $attendance->update([
                         'check_out' => $now,
                         'check_out_lat' => $request->latitude,
@@ -207,17 +209,17 @@ class AttendanceController extends Controller
     public function history(Request $request)
     {
         $employee = Auth::user()->employee;
-        
+
         $query = Attendance::with(['location'])
             ->where('employee_id', $employee->id);
 
         if ($request->has('month') && $request->month) {
             $month = Carbon::parse($request->month);
             $query->whereYear('date', $month->year)
-                  ->whereMonth('date', $month->month);
+                ->whereMonth('date', $month->month);
         } else {
             $query->whereMonth('date', Carbon::now()->month)
-                  ->whereYear('date', Carbon::now()->year);
+                ->whereYear('date', Carbon::now()->year);
         }
 
         $attendances = $query->orderBy('date', 'desc')->get();
@@ -245,9 +247,12 @@ class AttendanceController extends Controller
             abort(403, 'Unauthorized access to attendance record.');
         }
 
-        $attendance->load(['location', 'attendanceLogs' => function ($query) {
-            $query->orderBy('action_time');
-        }]);
+        $attendance->load([
+            'location',
+            'attendanceLogs' => function ($query) {
+                $query->orderBy('action_time');
+            }
+        ]);
 
         return view('employee.attendance.show', compact('attendance'));
     }
@@ -255,21 +260,21 @@ class AttendanceController extends Controller
     private function exportToCsv($attendances, $employee)
     {
         $filename = 'my_attendance_' . now()->format('Y-m-d_H-i-s') . '.csv';
-        
+
         $headers = [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ];
 
-        $callback = function() use ($attendances, $employee) {
+        $callback = function () use ($attendances, $employee) {
             $file = fopen('php://output', 'w');
-            
+
             // CSV Headers
             fputcsv($file, [
                 'Attendance Report - ' . $employee->full_name
             ]);
             fputcsv($file, []); // Empty row
-            
+
             fputcsv($file, [
                 'Date',
                 'Day',
@@ -366,7 +371,6 @@ class AttendanceController extends Controller
 
             foreach ($availableGalleries as $gallery) {
                 $response = $this->faceApiService->verifyFace(
-                    $employee->nik,
                     $gallery->gallery_id,
                     $faceImage
                 );

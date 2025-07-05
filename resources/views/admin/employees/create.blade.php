@@ -67,12 +67,6 @@
                                 </div>
 
                                 <div>
-                                    <x-forms.input label="NIK (National ID) *" name="nik" type="text"
-                                        placeholder="16-digit NIK" value="{{ old('nik') }}" maxlength="16"
-                                        required />
-                                </div>
-
-                                <div>
                                     <x-forms.input label="Full Name (as per ID) *" name="full_name" type="text"
                                         placeholder="Enter full name as per ID" value="{{ old('full_name') }}"
                                         required />
@@ -158,12 +152,6 @@
     </div>
 
     <script>
-        // Auto-format NIK input
-        document.getElementById('nik').addEventListener('input', function(e) {
-            const value = e.target.value.replace(/\D/g, '');
-            e.target.value = value.substring(0, 16);
-        });
-
         // Auto-copy name to full_name if empty
         document.getElementById('name').addEventListener('input', function(e) {
             const fullNameField = document.getElementById('full_name');

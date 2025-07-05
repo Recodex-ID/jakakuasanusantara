@@ -10,7 +10,6 @@ class Location extends Model
 {
     protected $fillable = [
         'name',
-        'description',
         'address',
         'latitude',
         'longitude',

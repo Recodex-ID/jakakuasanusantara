@@ -29,9 +29,8 @@ class EmployeeController extends Controller
             $search = $request->get('search');
             $query->where(function ($q) use ($search) {
                 $q->where('employee_id', 'like', "%{$search}%")
-                  ->orWhere('full_name', 'like', "%{$search}%")
-                  ->orWhere('nik', 'like', "%{$search}%")
-                  ->orWhere('department', 'like', "%{$search}%");
+                    ->orWhere('full_name', 'like', "%{$search}%")
+                    ->orWhere('department', 'like', "%{$search}%");
             });
         }
 
@@ -58,7 +57,6 @@ class EmployeeController extends Controller
             'username' => 'required|string|max:255|unique:users',
             'password' => 'required|string|min:8',
             'employee_id' => 'required|string|unique:employees',
-            'nik' => 'required|string|unique:employees',
             'full_name' => 'required|string|max:255',
             'department' => 'nullable|string|max:255',
             'position' => 'nullable|string|max:255',
@@ -82,7 +80,6 @@ class EmployeeController extends Controller
             $employee = Employee::create([
                 'user_id' => $user->id,
                 'employee_id' => $request->employee_id,
-                'nik' => $request->nik,
                 'full_name' => $request->full_name,
                 'department' => $request->department,
                 'position' => $request->position,
@@ -104,14 +101,14 @@ class EmployeeController extends Controller
     public function show(Employee $employee)
     {
         $employee->load(['user', 'locations']);
-        
+
         // Get recent attendances
         $recentAttendances = $employee->attendances()
             ->with('location')
             ->latest()
             ->take(5)
             ->get();
-            
+
         // Get attendance statistics
         $attendanceStats = [
             'this_month' => $employee->attendances()
@@ -137,7 +134,7 @@ class EmployeeController extends Controller
     {
         $employee->load(['user', 'locations']);
         $locations = Location::where('status', 'active')->get();
-        
+
         return view('admin.employees.edit', compact('employee', 'locations'));
     }
 
@@ -149,7 +146,6 @@ class EmployeeController extends Controller
             'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($employee->user_id)],
             'password' => 'nullable|string|min:8',
             'employee_id' => ['required', 'string', Rule::unique('employees')->ignore($employee->id)],
-            'nik' => ['required', 'string', Rule::unique('employees')->ignore($employee->id)],
             'full_name' => 'required|string|max:255',
             'department' => 'nullable|string|max:255',
             'position' => 'nullable|string|max:255',
@@ -177,7 +173,6 @@ class EmployeeController extends Controller
 
             $employee->update([
                 'employee_id' => $request->employee_id,
-                'nik' => $request->nik,
                 'full_name' => $request->full_name,
                 'department' => $request->department,
                 'position' => $request->position,
@@ -198,7 +193,7 @@ class EmployeeController extends Controller
     public function destroy(Employee $employee)
     {
         $employee->user->delete();
-        
+
         return redirect()->route('admin.employees.index')
             ->with('success', 'Employee deleted successfully.');
     }
@@ -206,7 +201,7 @@ class EmployeeController extends Controller
     public function showEnrollFace(Employee $employee)
     {
         $employee->load(['user', 'locations']);
-        
+
         return view('admin.employees.enroll-face', compact('employee'));
     }
 
@@ -219,7 +214,6 @@ class EmployeeController extends Controller
 
         try {
             $response = $this->faceApiService->enrollFace(
-                $employee->nik,
                 $employee->full_name,
                 $request->gallery_id,
                 $request->face_image
