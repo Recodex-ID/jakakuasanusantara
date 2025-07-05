@@ -18,9 +18,6 @@
                     <x-layouts.sidebar-link href="{{ route('admin.locations.index') }}" icon='fas-map-marker-alt'
                         :active="request()->routeIs('admin.locations*')">Locations</x-layouts.sidebar-link>
 
-                    <!-- Face Gallery Management -->
-                    <x-layouts.sidebar-link href="{{ route('admin.face-galleries.index') }}" icon='fas-images'
-                        :active="request()->routeIs('admin.face-galleries*')">Face Gallery</x-layouts.sidebar-link>
 
                     <!-- Attendance Management -->
                     <x-layouts.sidebar-link href="{{ route('admin.attendances.index') }}" icon='fas-clock'

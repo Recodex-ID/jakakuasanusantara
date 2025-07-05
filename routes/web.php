@@ -42,10 +42,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('locations/validate', [Admin\LocationController::class, 'validateLocation'])
         ->name('locations.validate');
     
-    // Face Gallery Management
-    Route::resource('face-galleries', Admin\FaceGalleryController::class);
-    Route::get('face-galleries-sync', [Admin\FaceGalleryController::class, 'syncWithApi'])
-        ->name('face-galleries.sync');
     
     // Attendance Management
     Route::resource('attendances', Admin\AttendanceController::class);

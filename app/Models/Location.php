@@ -27,10 +27,6 @@ class Location extends Model
         return $this->hasMany(Employee::class);
     }
 
-    public function faceGalleries(): HasMany
-    {
-        return $this->hasMany(FaceGallery::class);
-    }
 
     public function attendances(): HasMany
     {
