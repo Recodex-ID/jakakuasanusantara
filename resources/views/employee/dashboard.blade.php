@@ -1,6 +1,9 @@
 <x-layouts.app>
     <x-slot name="title">Employee Dashboard</x-slot>
 
+    <!-- Flash Messages -->
+    <x-flash-messages />
+
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Dashboard Header -->

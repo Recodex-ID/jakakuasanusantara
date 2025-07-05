@@ -1,6 +1,9 @@
 <x-layouts.app>
     <x-slot name="title">Employee Management</x-slot>
 
+    <!-- Flash Messages -->
+    <x-flash-messages />
+
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Header -->
@@ -114,15 +117,14 @@
                                         <div class="text-sm text-gray-500">{{ $employee->position ?? '-' }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex flex-wrap gap-1">
-                                            @foreach ($employee->locations as $location)
+                                        <div>
+                                            @if ($employee->location)
                                                 <span
                                                     class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                    {{ $location->name }}
+                                                    {{ $employee->location->name }}
                                                 </span>
-                                            @endforeach
-                                            @if ($employee->locations->isEmpty())
-                                                <span class="text-sm text-gray-500">No locations assigned</span>
+                                            @else
+                                                <span class="text-sm text-gray-500">No location assigned</span>
                                             @endif
                                         </div>
                                     </td>

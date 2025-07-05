@@ -38,10 +38,10 @@ class AttendanceController extends Controller
                 ->with('error', 'Employee profile not found.');
         }
 
-        $locations = $employee->locations()->where('status', 'active')->get();
+        $location = $employee->location && $employee->location->status === 'active' ? $employee->location : null;
         $todayAttendance = $this->getTodayAttendance($employee);
 
-        return view('employee.attendance.index', compact('locations', 'todayAttendance'));
+        return view('employee.attendance.index', compact('location', 'todayAttendance'));
     }
 
     public function record(Request $request)

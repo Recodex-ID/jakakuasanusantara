@@ -43,6 +43,7 @@ class AdminUserSeeder extends Seeder
         if ($employeeUser && !$employeeUser->employee) {
             $employeeUser->employee()->create([
                 'employee_id' => 'EMP001',
+                'location_id' => 1,
                 'department' => 'Information Technology',
                 'position' => 'Software Developer',
                 'phone' => '081234567890',

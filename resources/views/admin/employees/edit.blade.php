@@ -1,6 +1,9 @@
 <x-layouts.app>
     <x-slot name="title">Edit Employee</x-slot>
 
+    <!-- Flash Messages -->
+    <x-flash-messages />
+
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Header -->
@@ -121,31 +124,23 @@
                         <!-- Location Assignment -->
                         <div>
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Location Assignment</h3>
-                            <div class="space-y-3">
-                                @forelse($locations as $location)
-                                    <label
-                                        class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
-                                        <input type="checkbox" name="locations[]" value="{{ $location->id }}"
-                                            {{ in_array($location->id, old('locations', $employee->locations->pluck('id')->toArray())) ? 'checked' : '' }}
-                                            class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                        <div class="ml-3">
-                                            <div class="text-sm font-medium text-gray-900">{{ $location->name }}</div>
-                                            <div class="text-sm text-gray-500">{{ $location->address }}</div>
-                                        </div>
-                                    </label>
-                                @empty
-                                    <div class="text-center py-6 text-gray-500">
-                                        <p>No locations available. Please create locations first.</p>
-                                        <a href="{{ route('admin.locations.create') }}"
-                                            class="mt-2 inline-flex items-center text-blue-600 hover:text-blue-800">
-                                            Create Location
-                                        </a>
-                                    </div>
-                                @endforelse
+                            <div>
+                                <x-forms.select 
+                                    label="Assigned Location" 
+                                    name="location_id" 
+                                    :options="$locations->pluck('name', 'id')->prepend('-- Select Location --', '')" 
+                                    :selected="old('location_id', $employee->location_id)" />
+                                <p class="mt-1 text-sm text-gray-500">Employee will be able to check attendance at this location</p>
                             </div>
-                            @error('locations')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                            @if($locations->isEmpty())
+                                <div class="text-center py-6 text-gray-500">
+                                    <p>No locations available. Please create locations first.</p>
+                                    <a href="{{ route('admin.locations.create') }}"
+                                        class="mt-2 inline-flex items-center text-blue-600 hover:text-blue-800">
+                                        Create Location
+                                    </a>
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Form Actions -->

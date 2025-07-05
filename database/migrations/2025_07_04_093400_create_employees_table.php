@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('employee_id')->unique();
+            $table->foreignId('location_id')->nullable()->constrained()->nullOnDelete();
             $table->string('department')->nullable();
             $table->string('position')->nullable();
             $table->string('phone')->nullable();

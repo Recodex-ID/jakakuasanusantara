@@ -23,7 +23,7 @@ class EmployeeController extends Controller
 
     public function index(Request $request)
     {
-        $query = Employee::with(['user', 'locations']);
+        $query = Employee::with(['user', 'location']);
 
         if ($request->has('search')) {
             $search = $request->get('search');
@@ -65,8 +65,7 @@ class EmployeeController extends Controller
             'address' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
             'gender' => 'nullable|in:male,female',
-            'locations' => 'array',
-            'locations.*' => 'exists:locations,id',
+            'location_id' => 'nullable|exists:locations,id',
         ]);
 
         DB::transaction(function () use ($request) {
@@ -81,6 +80,7 @@ class EmployeeController extends Controller
             $employee = Employee::create([
                 'user_id' => $user->id,
                 'employee_id' => $request->employee_id,
+                'location_id' => $request->location_id,
                 'department' => $request->department,
                 'position' => $request->position,
                 'phone' => $request->phone,
@@ -89,9 +89,6 @@ class EmployeeController extends Controller
                 'gender' => $request->gender,
             ]);
 
-            if ($request->has('locations')) {
-                $employee->locations()->attach($request->locations);
-            }
         });
 
         return redirect()->route('admin.employees.index')
@@ -100,7 +97,7 @@ class EmployeeController extends Controller
 
     public function show(Employee $employee)
     {
-        $employee->load(['user', 'locations']);
+        $employee->load(['user', 'location']);
 
         // Get recent attendances
         $recentAttendances = $employee->attendances()
@@ -132,7 +129,7 @@ class EmployeeController extends Controller
 
     public function edit(Employee $employee)
     {
-        $employee->load(['user', 'locations']);
+        $employee->load(['user', 'location']);
         $locations = Location::where('status', 'active')->get();
 
         return view('admin.employees.edit', compact('employee', 'locations'));
@@ -153,8 +150,7 @@ class EmployeeController extends Controller
             'date_of_birth' => 'nullable|date',
             'gender' => 'nullable|in:male,female',
             'status' => 'required|in:active,inactive',
-            'locations' => 'array',
-            'locations.*' => 'exists:locations,id',
+            'location_id' => 'nullable|exists:locations,id',
         ]);
 
         DB::transaction(function () use ($request, $employee) {
@@ -172,6 +168,7 @@ class EmployeeController extends Controller
 
             $employee->update([
                 'employee_id' => $request->employee_id,
+                'location_id' => $request->location_id,
                 'department' => $request->department,
                 'position' => $request->position,
                 'phone' => $request->phone,
@@ -181,7 +178,6 @@ class EmployeeController extends Controller
                 'status' => $request->status,
             ]);
 
-            $employee->locations()->sync($request->locations ?? []);
         });
 
         return redirect()->route('admin.employees.index')
@@ -198,7 +194,7 @@ class EmployeeController extends Controller
 
     public function showEnrollFace(Employee $employee)
     {
-        $employee->load(['user', 'locations']);
+        $employee->load(['user', 'location']);
 
         return view('admin.employees.enroll-face', compact('employee'));
     }

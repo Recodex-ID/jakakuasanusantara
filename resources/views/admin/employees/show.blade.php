@@ -114,28 +114,24 @@
                         </div>
                     </div>
 
-                    <!-- Assigned Locations -->
+                    <!-- Assigned Location -->
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Assigned Locations</h3>
-                            @if ($employee->locations->isEmpty())
-                                <p class="text-gray-500">No locations assigned.</p>
-                            @else
-                                <div class="space-y-3">
-                                    @foreach ($employee->locations as $location)
-                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                            <div>
-                                                <h4 class="font-medium text-gray-900">{{ $location->name }}</h4>
-                                                <p class="text-sm text-gray-600">{{ $location->address }}</p>
-                                            </div>
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                         {{ $location->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                                {{ ucfirst($location->status) }}
-                                            </span>
-                                        </div>
-                                    @endforeach
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Assigned Location</h3>
+                            @if ($employee->location)
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">{{ $employee->location->name }}</h4>
+                                        <p class="text-sm text-gray-600">{{ $employee->location->address }}</p>
+                                    </div>
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                                 {{ $employee->location->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                        {{ ucfirst($employee->location->status) }}
+                                    </span>
                                 </div>
+                            @else
+                                <p class="text-gray-500">No location assigned.</p>
                             @endif
                         </div>
                     </div>

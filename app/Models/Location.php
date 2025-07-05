@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Location extends Model
@@ -23,9 +22,9 @@ class Location extends Model
         'radius_meters' => 'integer',
     ];
 
-    public function employees(): BelongsToMany
+    public function employees(): HasMany
     {
-        return $this->belongsToMany(Employee::class, 'employee_locations');
+        return $this->hasMany(Employee::class);
     }
 
     public function faceGalleries(): HasMany

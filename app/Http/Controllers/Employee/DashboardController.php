@@ -22,13 +22,13 @@ class DashboardController extends Controller
         $todayAttendance = $this->getTodayAttendance($employee);
         $thisMonthStats = $this->getThisMonthStats($employee);
         $recentAttendances = $this->getRecentAttendances($employee);
-        $assignedLocations = $employee->locations()->where('status', 'active')->get();
+        $assignedLocation = $employee->location && $employee->location->status === 'active' ? $employee->location : null;
 
         return view('employee.dashboard', compact(
             'todayAttendance',
             'thisMonthStats',
             'recentAttendances',
-            'assignedLocations'
+            'assignedLocation'
         ));
     }
 
@@ -41,7 +41,7 @@ class DashboardController extends Controller
                 ->with('error', 'Employee profile not found.');
         }
 
-        $employee->load(['user', 'locations']);
+        $employee->load(['user', 'location']);
 
         return view('employee.profile', compact('employee'));
     }

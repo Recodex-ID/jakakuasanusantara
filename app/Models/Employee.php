@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Employee extends Model
@@ -12,6 +11,7 @@ class Employee extends Model
     protected $fillable = [
         'user_id',
         'employee_id',
+        'location_id',
         'department',
         'position',
         'phone',
@@ -30,9 +30,9 @@ class Employee extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function locations(): BelongsToMany
+    public function location(): BelongsTo
     {
-        return $this->belongsToMany(Location::class, 'employee_locations');
+        return $this->belongsTo(Location::class);
     }
 
     public function attendances(): HasMany
