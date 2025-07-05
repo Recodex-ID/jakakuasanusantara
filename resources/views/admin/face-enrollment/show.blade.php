@@ -215,6 +215,21 @@
                             <li>• Look directly at the camera</li>
                             <li>• Remove glasses or masks if possible</li>
                             <li>• Avoid shadows on the face</li>
+                            <li>• <strong>Be patient:</strong> Face processing can take 15-30 seconds</li>
+                        </ul>
+                    </div>
+
+                    <!-- Performance Info -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="font-medium text-blue-800 mb-2">
+                            <x-fas-info-circle class="w-4 h-4 mr-1 inline" />
+                            Processing Information
+                        </h4>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• Image is optimized to 640x480 for faster upload</li>
+                            <li>• External API processing may take 15-30 seconds</li>
+                            <li>• Please wait for the process to complete</li>
+                            <li>• Don't refresh the page during enrollment</li>
                         </ul>
                     </div>
                 </div>
@@ -279,13 +294,25 @@
             const canvas = document.getElementById('canvas');
             const context = canvas.getContext('2d');
 
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0);
+            // Optimize image size for better performance
+            const maxWidth = 640;
+            const maxHeight = 480;
+            let { videoWidth, videoHeight } = video;
+            
+            // Calculate scaled dimensions
+            if (videoWidth > maxWidth || videoHeight > maxHeight) {
+                const ratio = Math.min(maxWidth / videoWidth, maxHeight / videoHeight);
+                videoWidth = videoWidth * ratio;
+                videoHeight = videoHeight * ratio;
+            }
 
-            // Show preview
+            canvas.width = videoWidth;
+            canvas.height = videoHeight;
+            context.drawImage(video, 0, 0, videoWidth, videoHeight);
+
+            // Show preview with optimized quality
             const capturedImage = document.getElementById('capturedImage');
-            capturedImageData = canvas.toDataURL('image/jpeg', 0.8);
+            capturedImageData = canvas.toDataURL('image/jpeg', 0.7); // Reduced quality for faster upload
             capturedImage.src = capturedImageData;
             document.getElementById('photoPreview').classList.remove('hidden');
 
@@ -319,17 +346,37 @@
 
             const base64data = capturedImageData.split(',')[1];
 
-            // Show loading state
+            // Show progressive loading states
             const enrollBtn = document.getElementById('enrollBtn');
             const originalText = enrollBtn.innerHTML;
             enrollBtn.disabled = true;
-            enrollBtn.innerHTML = `
-                <svg class="animate-spin w-5 h-5 mr-2 inline" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Enrolling...
-            `;
+            
+            // Start with initial loading state
+            let loadingStep = 0;
+            const loadingSteps = [
+                'Preparing image...',
+                'Uploading to Face API...',
+                'Processing face recognition...',
+                'Finalizing enrollment...'
+            ];
+            
+            function updateLoadingText() {
+                enrollBtn.innerHTML = `
+                    <svg class="animate-spin w-5 h-5 mr-2 inline" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    ${loadingSteps[loadingStep]}
+                `;
+                loadingStep = (loadingStep + 1) % loadingSteps.length;
+            }
+            
+            updateLoadingText();
+            const loadingInterval = setInterval(updateLoadingText, 3000);
+
+            // Add timeout and signal for better error handling
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
             fetch(`{{ route('admin.face-enrollment.store', $employee) }}`, {
                     method: 'POST',
@@ -339,10 +386,13 @@
                     },
                     body: JSON.stringify({
                         face_image: base64data
-                    })
+                    }),
+                    signal: controller.signal
                 })
                 .then(response => response.json())
                 .then(data => {
+                    clearTimeout(timeoutId);
+                    clearInterval(loadingInterval);
                     enrollBtn.disabled = false;
                     enrollBtn.innerHTML = originalText;
 
@@ -369,10 +419,17 @@
                     }
                 })
                 .catch(error => {
+                    clearTimeout(timeoutId);
+                    clearInterval(loadingInterval);
                     enrollBtn.disabled = false;
                     enrollBtn.innerHTML = originalText;
-                    console.error('Enrollment error:', error);
-                    alert('An error occurred during face enrollment');
+                    
+                    if (error.name === 'AbortError') {
+                        alert('Request timeout. The face enrollment service might be busy. Please try again.');
+                    } else {
+                        console.error('Enrollment error:', error);
+                        alert('An error occurred during face enrollment. Please check your internet connection and try again.');
+                    }
                 });
         }
 
