@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\Location;
 use App\Models\User;
-use App\Services\FaceApiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -14,12 +13,6 @@ use Illuminate\Validation\Rule;
 
 class EmployeeController extends Controller
 {
-    protected FaceApiService $faceApiService;
-
-    public function __construct(FaceApiService $faceApiService)
-    {
-        $this->faceApiService = $faceApiService;
-    }
 
     public function index(Request $request)
     {
@@ -192,48 +185,4 @@ class EmployeeController extends Controller
             ->with('success', 'Employee deleted successfully.');
     }
 
-    public function showEnrollFace(Employee $employee)
-    {
-        $employee->load(['user', 'location']);
-
-        return view('admin.employees.enroll-face', compact('employee'));
-    }
-
-    public function enrollFace(Request $request, Employee $employee)
-    {
-        $request->validate([
-            'face_image' => 'required|string',
-        ]);
-
-        try {
-            $response = $this->faceApiService->enrollEmployeeFace(
-                $employee->employee_id,
-                $employee->user->name,
-                $request->face_image
-            );
-
-            if ($response['status'] === '200') {
-                // Update employee face_enrolled status
-                $employee->update(['face_enrolled' => true]);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Face enrolled successfully.',
-                    'data' => $response
-                ]);
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => $response['status_message'] ?? 'Face enrollment failed.',
-                    'data' => $response
-                ], 422);
-            }
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred during face enrollment.',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
 }

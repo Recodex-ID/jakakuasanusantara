@@ -63,6 +63,10 @@
                                 </th>
                                 <th
                                     class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Username
+                                </th>
+                                <th
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Employee ID
                                 </th>
                                 <th
@@ -101,13 +105,13 @@
                                                     {{ $employee->user->name }}
                                                 </div>
                                                 <div class="text-sm text-gray-500">
-                                                    {{ $employee->user->username }}
-                                                </div>
-                                                <div class="text-xs text-gray-400">
                                                     {{ $employee->user->email }}
                                                 </div>
                                             </div>
                                         </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">{{ $employee->user->username }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">{{ $employee->employee_id }}</div>
@@ -117,16 +121,11 @@
                                         <div class="text-sm text-gray-500">{{ $employee->position ?? '-' }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div>
-                                            @if ($employee->location)
-                                                <span
-                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                    {{ $employee->location->name }}
-                                                </span>
-                                            @else
-                                                <span class="text-sm text-gray-500">No location assigned</span>
-                                            @endif
-                                        </div>
+                                        @if ($employee->location)
+                                            <div class="text-sm text-gray-900">{{ $employee->location->name }}</div>
+                                        @else
+                                            <div class="text-sm text-gray-900">No location assigned</div>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
@@ -145,7 +144,7 @@
                                                 class="text-yellow-600 hover:text-yellow-900" title="Edit">
                                                 <x-fas-edit class="w-5 h-5" />
                                             </a>
-                                            <a href="{{ route('admin.employees.enroll-face', $employee) }}"
+                                            <a href="{{ route('admin.face-enrollment.show', $employee) }}"
                                                 class="text-purple-600 hover:text-purple-900" title="Enroll Face">
                                                 <x-fas-camera class="w-5 h-5" />
                                             </a>
@@ -165,7 +164,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-12 text-center">
+                                    <td colspan="7" class="px-6 py-12 text-center">
                                         <div class="text-gray-500">
                                             <x-fas-users class="w-12 h-12 mx-auto mb-4 text-gray-400" />
                                             <p class="text-lg font-medium">No employees found</p>

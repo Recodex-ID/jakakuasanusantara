@@ -331,7 +331,7 @@
                 Enrolling...
             `;
 
-            fetch(`/admin/employees/{{ $employee->id }}/enroll-face`, {
+            fetch(`{{ route('admin.face-enrollment.store', $employee) }}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

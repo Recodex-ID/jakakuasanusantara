@@ -32,10 +32,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // Employee Management
     Route::resource('employees', Admin\EmployeeController::class);
-    Route::get('employees/{employee}/enroll-face', [Admin\EmployeeController::class, 'showEnrollFace'])
-        ->name('employees.enroll-face');
-    Route::post('employees/{employee}/enroll-face', [Admin\EmployeeController::class, 'enrollFace'])
-        ->name('employees.enroll-face.store');
+    
+    // Face Enrollment Management
+    Route::prefix('face-enrollment')->name('face-enrollment.')->group(function () {
+        Route::get('{employee}', [Admin\FaceEnrollmentController::class, 'show'])->name('show');
+        Route::post('{employee}', [Admin\FaceEnrollmentController::class, 'store'])->name('store');
+        Route::get('{employee}/status', [Admin\FaceEnrollmentController::class, 'status'])->name('status');
+        Route::delete('{employee}', [Admin\FaceEnrollmentController::class, 'destroy'])->name('destroy');
+    });
     
     // Location Management
     Route::resource('locations', Admin\LocationController::class);
