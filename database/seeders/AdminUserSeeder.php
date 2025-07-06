@@ -51,6 +51,9 @@ class AdminUserSeeder extends Seeder
                 'date_of_birth' => '1990-01-01',
                 'gender' => 'male',
                 'status' => 'active',
+                'work_start_time' => '08:00:00',
+                'work_end_time' => '17:00:00',
+                'late_tolerance_minutes' => 15,
             ]);
         }
     }

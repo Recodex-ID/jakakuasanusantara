@@ -9,7 +9,7 @@
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="container mx-auto sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">
@@ -120,7 +120,8 @@
                                 <li>• Click anywhere on the map to set new coordinates</li>
                                 <li>• Drag the marker to fine-tune the position</li>
                                 <li>• Use "Use Current Location" for approximate location (IP-based)</li>
-                                <li>• For precise coordinates: use Google Maps, right-click location, copy coordinates</li>
+                                <li>• For precise coordinates: use Google Maps, right-click location, copy coordinates
+                                </li>
                                 <li>• Manually edit the latitude/longitude fields below</li>
                                 <li>• Adjust the radius to change the attendance boundary</li>
                             </ul>
@@ -132,10 +133,9 @@
                                 class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors">
                                 Cancel
                             </a>
-                            <button type="submit"
-                                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
+                            <x-button type="primary" buttonType="submit">
                                 Update Location
-                            </button>
+                            </x-button>
                         </div>
                     </form>
                 </div>
@@ -254,7 +254,8 @@
             // Show loading state
             const button = document.querySelector('button[onclick="getCurrentLocation()"]');
             const originalText = button.innerHTML;
-            button.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>Getting location...';
+            button.innerHTML =
+                '<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>Getting location...';
             button.disabled = true;
 
             // Get current position with options - try high accuracy first, then fallback
@@ -263,7 +264,7 @@
                 timeout: 15000, // 15 seconds
                 maximumAge: 60000 // 1 minute
             };
-            
+
             const lowAccuracyOptions = {
                 enableHighAccuracy: false,
                 timeout: 10000, // 10 seconds
@@ -276,7 +277,7 @@
                     // Success callback
                     updateLocation(position.coords.latitude, position.coords.longitude);
                     showFlashMessage('Location coordinates updated successfully!', 'success');
-                    
+
                     // Reset button
                     button.innerHTML = originalText;
                     button.disabled = false;
@@ -284,13 +285,14 @@
                 function(error) {
                     // High accuracy failed, try low accuracy
                     console.log('High accuracy failed:', error.message);
-                    
+
                     navigator.geolocation.getCurrentPosition(
                         function(position) {
                             // Success callback for low accuracy
                             updateLocation(position.coords.latitude, position.coords.longitude);
-                            showFlashMessage('Location coordinates updated successfully! (Low accuracy)', 'success');
-                            
+                            showFlashMessage('Location coordinates updated successfully! (Low accuracy)',
+                            'success');
+
                             // Reset button
                             button.innerHTML = originalText;
                             button.disabled = false;
@@ -299,7 +301,7 @@
                             // Both GPS attempts failed, try IP-based geolocation
                             console.log('Both accuracy attempts failed:', error.message);
                             console.log('Trying IP-based geolocation as fallback...');
-                            
+
                             // Try IP-based geolocation as last resort
                             tryIPGeolocation(button, originalText, error);
                         },
@@ -318,14 +320,14 @@
                 'https://ipinfo.io/json',
                 'https://api.ipgeolocation.io/ipgeo?apiKey=&ip='
             ];
-            
+
             async function tryService(serviceUrl) {
                 try {
                     const response = await fetch(serviceUrl);
                     const data = await response.json();
-                    
+
                     let lat, lng;
-                    
+
                     // Handle different API response formats
                     if (data.latitude && data.longitude) {
                         lat = parseFloat(data.latitude);
@@ -338,7 +340,7 @@
                         lat = parseFloat(coords[0]);
                         lng = parseFloat(coords[1]);
                     }
-                    
+
                     if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
                         updateLocation(lat, lng);
                         showFlashMessage('Location updated using IP geolocation (approximate)', 'success');
@@ -346,14 +348,14 @@
                         button.disabled = false;
                         return true;
                     }
-                    
+
                     return false;
                 } catch (error) {
                     console.log('IP geolocation service failed:', error);
                     return false;
                 }
             }
-            
+
             // Try services one by one
             (async () => {
                 for (const service of ipServices) {
@@ -361,11 +363,11 @@
                         return; // Success, exit
                     }
                 }
-                
+
                 // All services failed, show original error
                 let errorMessage = 'Unable to get your location.';
                 let suggestions = '';
-                
+
                 switch (originalError.code) {
                     case originalError.PERMISSION_DENIED:
                         errorMessage = 'Location access denied.';
@@ -373,7 +375,8 @@
                         break;
                     case originalError.POSITION_UNAVAILABLE:
                         errorMessage = 'GPS location unavailable.';
-                        suggestions = 'Try enabling location services in System Preferences → Security & Privacy → Location Services, or enter coordinates manually.';
+                        suggestions =
+                            'Try enabling location services in System Preferences → Security & Privacy → Location Services, or enter coordinates manually.';
                         break;
                     case originalError.TIMEOUT:
                         errorMessage = 'Location request timed out.';
@@ -385,7 +388,7 @@
                 }
 
                 showFlashMessage(errorMessage + ' ' + suggestions, 'error');
-                
+
                 // Reset button
                 button.innerHTML = originalText;
                 button.disabled = false;
@@ -395,12 +398,12 @@
         // Show flash message using the exact same structure as flash-messages component
         function showFlashMessage(message, type = 'success') {
             const flashContainer = document.getElementById('flash-container') || createFlashContainer();
-            
+
             // Create the exact same HTML structure as the Blade component
             const flashDiv = document.createElement('div');
             flashDiv.className = 'flash-message px-4 py-3 rounded-lg shadow-lg max-w-sm';
             flashDiv.setAttribute('role', 'alert');
-            
+
             if (type === 'success') {
                 flashDiv.className += ' bg-green-100 border border-green-400 text-green-700';
                 flashDiv.innerHTML = `
@@ -432,9 +435,9 @@
                     </div>
                 `;
             }
-            
+
             flashContainer.appendChild(flashDiv);
-            
+
             // Auto remove after 5 seconds (same as the component)
             setTimeout(() => {
                 if (flashDiv.parentElement) {
@@ -449,7 +452,7 @@
                 }
             }, 5000);
         }
-        
+
         // Create flash container if it doesn't exist
         function createFlashContainer() {
             const container = document.createElement('div');

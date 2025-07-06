@@ -55,7 +55,7 @@ class Employee extends Model
         try {
             $faceApiService = app(\App\Services\FaceApiService::class);
             $response = $faceApiService->listAllFaces();
-            
+
             if (isset($response['status']) && $response['status'] === '200' && isset($response['faces'])) {
                 $enrolledFaces = array_column($response['faces'], 'user_id');
                 return in_array($this->employee_id, $enrolledFaces);
@@ -63,7 +63,7 @@ class Employee extends Model
         } catch (\Exception $e) {
             // If face API is unavailable, return false to be safe
         }
-        
+
         return false;
     }
 
@@ -71,7 +71,7 @@ class Employee extends Model
     public function isWorkDay(\Carbon\Carbon $date): bool
     {
         $dayOfWeek = $date->dayOfWeek; // 0=Sunday, 1=Monday, ..., 6=Saturday
-        return in_array((string)$dayOfWeek, $this->work_days ?? []);
+        return in_array((string) $dayOfWeek, $this->work_days ?? []);
     }
 
     public function isLate(\Carbon\Carbon $checkInTime): bool
@@ -80,12 +80,12 @@ class Employee extends Model
             return false;
         }
 
-        $workStart = \Carbon\Carbon::createFromFormat('H:i:s', $this->work_start_time)
+        $workStart = \Carbon\Carbon::createFromFormat('H:i', $this->work_start_time)
             ->setDateFrom($checkInTime);
-        
+
         $tolerance = $this->late_tolerance_minutes ?? 15;
         $lateThreshold = $workStart->addMinutes($tolerance);
-        
+
         return $checkInTime->greaterThan($lateThreshold);
     }
 
@@ -105,8 +105,8 @@ class Employee extends Model
     public function getWorkingHours(): array
     {
         return [
-            'start' => $this->work_start_time ?? '08:00:00',
-            'end' => $this->work_end_time ?? '17:00:00',
+            'start' => $this->work_start_time ?? '09:00',
+            'end' => $this->work_end_time ?? '17:00',
             'tolerance' => $this->late_tolerance_minutes ?? 15,
             'work_days' => $this->work_days ?? ['1', '2', '3', '4', '5']
         ];
@@ -116,7 +116,7 @@ class Employee extends Model
     {
         $days = [
             '0' => 'Sunday',
-            '1' => 'Monday', 
+            '1' => 'Monday',
             '2' => 'Tuesday',
             '3' => 'Wednesday',
             '4' => 'Thursday',
@@ -125,6 +125,7 @@ class Employee extends Model
         ];
 
         return collect($this->work_days ?? [])
+            ->unique()
             ->map(fn($day) => $days[$day] ?? $day)
             ->toArray();
     }
@@ -135,9 +136,9 @@ class Employee extends Model
             return true; // Default to allow if no schedule set
         }
 
-        $workStart = \Carbon\Carbon::createFromFormat('H:i:s', $this->work_start_time)
+        $workStart = \Carbon\Carbon::createFromFormat('H:i', $this->work_start_time)
             ->setDateFrom($time);
-        $workEnd = \Carbon\Carbon::createFromFormat('H:i:s', $this->work_end_time)
+        $workEnd = \Carbon\Carbon::createFromFormat('H:i', $this->work_end_time)
             ->setDateFrom($time);
 
         return $time->between($workStart, $workEnd);

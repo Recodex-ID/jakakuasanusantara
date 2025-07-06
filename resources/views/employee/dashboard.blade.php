@@ -5,9 +5,9 @@
     <x-flash-messages />
 
     <!-- Face Enrollment Alert -->
-    @if(!$faceEnrolled)
+    @if (!$faceEnrolled)
         <div class="py-4">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="container mx-auto sm:px-6 lg:px-8">
                 <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg shadow-sm">
                     <div class="flex">
                         <div class="flex-shrink-0">
@@ -18,21 +18,25 @@
                                 Face Recognition Setup Required
                             </h3>
                             <div class="mt-2 text-sm text-yellow-700">
-                                <p>You need to register your face before you can record attendance. This is required for our face recognition attendance system.</p>
+                                <p>You need to register your face before you can record attendance. This is required for
+                                    our face recognition attendance system.</p>
                             </div>
                             <div class="mt-4">
                                 <div class="flex space-x-2">
-                                    <a href="{{ route('employee.face-enrollment.index') }}" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                    <a href="{{ route('employee.face-enrollment.index') }}"
+                                        class="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                                         Register Face Now
                                     </a>
-                                    <button onclick="dismissAlert()" class="bg-white hover:bg-gray-50 text-yellow-800 px-3 py-2 rounded-md text-sm font-medium border border-yellow-200 transition-colors">
+                                    <button onclick="dismissAlert()"
+                                        class="bg-white hover:bg-gray-50 text-yellow-800 px-3 py-2 rounded-md text-sm font-medium border border-yellow-200 transition-colors">
                                         Remind Later
                                     </button>
                                 </div>
                             </div>
                         </div>
                         <div class="flex-shrink-0 ml-4">
-                            <button onclick="dismissAlert()" class="bg-yellow-50 rounded-md inline-flex text-yellow-400 hover:text-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-50 focus:ring-yellow-600">
+                            <button onclick="dismissAlert()"
+                                class="bg-yellow-50 rounded-md inline-flex text-yellow-400 hover:text-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-yellow-50 focus:ring-yellow-600">
                                 <span class="sr-only">Close</span>
                                 <x-fas-times class="h-5 w-5" />
                             </button>
@@ -44,7 +48,7 @@
     @endif
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="container mx-auto sm:px-6 lg:px-8">
             <!-- Dashboard Header -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">

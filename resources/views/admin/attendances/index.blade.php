@@ -2,7 +2,7 @@
     <x-slot name="title">Attendance Monitoring</x-slot>
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="container mx-auto sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">
@@ -14,20 +14,12 @@
                         <div class="flex items-center space-x-3">
                             <button onclick="refreshData()"
                                 class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
-                                    </path>
-                                </svg>
+                                <x-fas-sync-alt class="w-5 h-5 mr-2" />
                                 Refresh
                             </button>
                             <a href="{{ route('admin.reports.index') }}"
                                 class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                    </path>
-                                </svg>
+                                <x-fas-chart-bar class="w-5 h-5 mr-2" />
                                 View Reports
                             </a>
                         </div>
@@ -42,11 +34,7 @@
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
                                 <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 13l4 4L19 7"></path>
-                                    </svg>
+                                    <x-fas-check class="w-5 h-5 text-green-600" />
                                 </div>
                             </div>
                             <div class="ml-4">
@@ -63,11 +51,7 @@
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
                                 <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
+                                    <x-fas-times class="w-5 h-5 text-red-600" />
                                 </div>
                             </div>
                             <div class="ml-4">
@@ -84,11 +68,7 @@
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
                                 <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
+                                    <x-fas-clock class="w-5 h-5 text-yellow-600" />
                                 </div>
                             </div>
                             <div class="ml-4">
@@ -105,12 +85,7 @@
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
                                 <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-                                        </path>
-                                    </svg>
+                                    <x-fas-users class="w-5 h-5 text-blue-600" />
                                 </div>
                             </div>
                             <div class="ml-4">
@@ -129,16 +104,11 @@
                     <form method="GET" action="{{ route('admin.attendances.index') }}"
                         class="flex flex-wrap gap-4 items-end">
                         <div class="min-w-48">
-                            <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                            <input type="date" name="date" id="date"
-                                value="{{ request('date', today()->format('Y-m-d')) }}"
-                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <x-forms.input type="date" name="date" id="date" label="Date"
+                                value="{{ request('date', today()->format('Y-m-d')) }}" />
                         </div>
                         <div class="min-w-48">
-                            <label for="location"
-                                class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                            <select name="location" id="location"
-                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <x-forms.select name="location" id="location" label="Location">
                                 <option value="">All Locations</option>
                                 @foreach ($locations as $location)
                                     <option value="{{ $location->id }}"
@@ -146,12 +116,10 @@
                                         {{ $location->name }}
                                     </option>
                                 @endforeach
-                            </select>
+                            </x-forms.select>
                         </div>
                         <div class="min-w-32">
-                            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                            <select name="status" id="status"
-                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <x-forms.select name="status" id="status" label="Status">
                                 <option value="">All Status</option>
                                 <option value="present" {{ request('status') === 'present' ? 'selected' : '' }}>
                                     Present</option>
@@ -159,13 +127,12 @@
                                 </option>
                                 <option value="late" {{ request('status') === 'late' ? 'selected' : '' }}>Late
                                 </option>
-                            </select>
+                            </x-forms.select>
                         </div>
                         <div class="flex gap-2">
-                            <button type="submit"
-                                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors">
+                            <x-button type="primary" buttonType="submit">
                                 Filter
-                            </button>
+                            </x-button>
                             <a href="{{ route('admin.attendances.index') }}"
                                 class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-md transition-colors">
                                 Reset
@@ -269,25 +236,11 @@
                                         <div class="flex items-center space-x-2">
                                             <a href="{{ route('admin.attendances.show', $attendance) }}"
                                                 class="text-blue-600 hover:text-blue-900" title="View Details">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                                    </path>
-                                                </svg>
+                                                <x-fas-eye class="w-5 h-5" />
                                             </a>
                                             <a href="{{ route('admin.employees.show', $attendance->employee) }}"
                                                 class="text-purple-600 hover:text-purple-900" title="View Employee">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z">
-                                                    </path>
-                                                </svg>
+                                                <x-fas-user class="w-5 h-5" />
                                             </a>
                                         </div>
                                     </td>
@@ -296,11 +249,7 @@
                                 <tr>
                                     <td colspan="6" class="px-6 py-12 text-center">
                                         <div class="text-gray-500">
-                                            <svg class="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none"
-                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
+                                            <x-fas-clipboard-list class="w-12 h-12 mx-auto mb-4 text-gray-400" />
                                             <p class="text-lg font-medium">No attendance records found</p>
                                             <p class="text-sm">Try adjusting your filters or check back later.</p>
                                         </div>

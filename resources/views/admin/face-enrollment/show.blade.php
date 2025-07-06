@@ -2,7 +2,7 @@
     <x-slot name="title">Face Enrollment - {{ $employee->user->name }}</x-slot>
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="container mx-auto sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">
@@ -111,8 +111,9 @@
                                     Face Gallery Information
                                 </h4>
                                 <p class="text-sm text-blue-700">
-                                    Face will be enrolled to the main system gallery: 
-                                    <span class="font-mono font-medium">{{ config('services.biznet_face.gallery_id') }}</span>
+                                    Face will be enrolled to the main system gallery:
+                                    <span
+                                        class="font-mono font-medium">{{ config('services.biznet_face.gallery_id') }}</span>
                                 </p>
                             </div>
 
@@ -296,10 +297,13 @@
             const context = canvas.getContext('2d');
 
             // Optimize image size for better performance - more aggressive compression
-            const maxWidth = 480;  // Reduced from 640
+            const maxWidth = 480; // Reduced from 640
             const maxHeight = 360; // Reduced from 480
-            let { videoWidth, videoHeight } = video;
-            
+            let {
+                videoWidth,
+                videoHeight
+            } = video;
+
             // Calculate scaled dimensions
             if (videoWidth > maxWidth || videoHeight > maxHeight) {
                 const ratio = Math.min(maxWidth / videoWidth, maxHeight / videoHeight);
@@ -346,7 +350,7 @@
             }
 
             const base64data = capturedImageData.split(',')[1];
-            
+
             // Debug: Log image size for optimization
             console.log('Image size (KB):', Math.round(base64data.length * 0.75 / 1024));
             console.log('Image dimensions:', canvas.width + 'x' + canvas.height);
@@ -355,7 +359,7 @@
             const enrollBtn = document.getElementById('enrollBtn');
             const originalText = enrollBtn.innerHTML;
             enrollBtn.disabled = true;
-            
+
             // Start with initial loading state
             let loadingStep = 0;
             const loadingSteps = [
@@ -364,7 +368,7 @@
                 'Processing face recognition...',
                 'Finalizing enrollment...'
             ];
-            
+
             function updateLoadingText() {
                 enrollBtn.innerHTML = `
                     <svg class="animate-spin w-5 h-5 mr-2 inline" fill="none" viewBox="0 0 24 24">
@@ -375,7 +379,7 @@
                 `;
                 loadingStep = (loadingStep + 1) % loadingSteps.length;
             }
-            
+
             updateLoadingText();
             const loadingInterval = setInterval(updateLoadingText, 3000);
 
@@ -403,7 +407,8 @@
 
                     if (data.success) {
                         // Success notification with processing time
-                        const processingTime = data.processing_time_ms ? ` (${Math.round(data.processing_time_ms/1000)}s)` : '';
+                        const processingTime = data.processing_time_ms ?
+                            ` (${Math.round(data.processing_time_ms/1000)}s)` : '';
                         const successDiv = document.createElement('div');
                         successDiv.className =
                             'fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg z-50';
@@ -429,12 +434,13 @@
                     clearInterval(loadingInterval);
                     enrollBtn.disabled = false;
                     enrollBtn.innerHTML = originalText;
-                    
+
                     if (error.name === 'AbortError') {
                         alert('Request timeout. The face enrollment service might be busy. Please try again.');
                     } else {
                         console.error('Enrollment error:', error);
-                        alert('An error occurred during face enrollment. Please check your internet connection and try again.');
+                        alert(
+                            'An error occurred during face enrollment. Please check your internet connection and try again.');
                     }
                 });
         }

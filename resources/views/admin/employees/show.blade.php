@@ -2,7 +2,7 @@
     <x-slot name="title">Employee Details</x-slot>
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="container mx-auto sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">
@@ -52,6 +52,15 @@
                                     <p class="mt-1 text-sm text-gray-900">{{ $employee->user->username ?? '-' }}</p>
                                 </div>
                                 <div>
+                                    <label class="block text-sm font-medium text-gray-700">Role</label>
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-1
+                                        @if ($employee->user->role === 'admin') bg-blue-100 text-blue-800
+                                        @else bg-green-100 text-green-800 @endif">
+                                        {{ ucfirst($employee->user->role) }}
+                                    </span>
+                                </div>
+                                <div>
                                     <label class="block text-sm font-medium text-gray-700">Phone</label>
                                     <p class="mt-1 text-sm text-gray-900">{{ $employee->phone ?? '-' }}</p>
                                 </div>
@@ -72,6 +81,14 @@
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-1
                                                  {{ $employee->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                         {{ ucfirst($employee->status) }}
+                                    </span>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Face Status</label>
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-1
+                                                 {{ $employee->isFaceEnrolled() ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                                        {{ $employee->isFaceEnrolled() ? 'Enrolled' : 'Not Enrolled' }}
                                     </span>
                                 </div>
                                 @if ($employee->address)
@@ -107,7 +124,7 @@
                                     <span
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-1
                                                  {{ $employee->user->email_verified_at ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                        {{ $employee->user->email_verified_at ? 'Verified' : 'Unverified' }}
+                                        {{ $employee->user->email_verified_at ? 'Email Verified' : 'Email Unverified' }}
                                     </span>
                                 </div>
                             </div>
@@ -119,16 +136,12 @@
                         <div class="p-6">
                             <h3 class="text-lg font-semibold text-gray-900 mb-4">Assigned Location</h3>
                             @if ($employee->location)
-                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div
+                                    class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg">
                                     <div>
                                         <h4 class="font-medium text-gray-900">{{ $employee->location->name }}</h4>
                                         <p class="text-sm text-gray-600">{{ $employee->location->address }}</p>
                                     </div>
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                 {{ $employee->location->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ ucfirst($employee->location->status) }}
-                                    </span>
                                 </div>
                             @else
                                 <p class="text-gray-500">No location assigned.</p>
@@ -144,20 +157,24 @@
                                 <div class="flex items-center justify-between">
                                     <span class="text-sm text-gray-600">Work Hours</span>
                                     <span class="text-sm font-medium text-gray-900">
-                                        {{ \Carbon\Carbon::createFromFormat('H:i:s', $employee->work_start_time ?? '08:00:00')->format('H:i') }} - 
-                                        {{ \Carbon\Carbon::createFromFormat('H:i:s', $employee->work_end_time ?? '17:00:00')->format('H:i') }}
+                                        {{ $employee->work_start_time ? \Carbon\Carbon::createFromFormat('H:i:s', $employee->work_start_time)->format('H:i') : '09:00' }}
+                                        -
+                                        {{ $employee->work_end_time ? \Carbon\Carbon::createFromFormat('H:i:s', $employee->work_end_time)->format('H:i') : '17:00' }}
                                     </span>
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-sm text-gray-600">Late Tolerance</span>
-                                    <span class="text-sm font-medium text-gray-900">{{ $employee->late_tolerance_minutes ?? 15 }} minutes</span>
+                                    <span
+                                        class="text-sm font-medium text-gray-900">{{ $employee->late_tolerance_minutes ?? 15 }}
+                                        minutes</span>
                                 </div>
                                 <div class="flex items-start justify-between">
                                     <span class="text-sm text-gray-600">Work Days</span>
                                     <div class="text-right">
-                                        @if($employee->work_days)
-                                            @foreach($employee->getWorkDaysNames() as $day)
-                                                <span class="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded mr-1 mb-1">{{ $day }}</span>
+                                        @if ($employee->work_days)
+                                            @foreach ($employee->getWorkDaysNames() as $day)
+                                                <span
+                                                    class="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded mr-1 mb-1">{{ $day }}</span>
                                             @endforeach
                                         @else
                                             <span class="text-sm text-gray-500">Not configured</span>

@@ -6,7 +6,7 @@
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="container mx-auto sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">
@@ -174,21 +174,19 @@
                                     <x-fas-edit class="w-5 h-5 mr-2" />
                                     Edit Location
                                 </a>
-                                <button onclick="centerMap()"
-                                    class="w-full flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
+                                <x-button type="primary" onclick="centerMap()" class="w-full">
                                     <x-fas-map class="w-5 h-5 mr-2" />
                                     Center Map
-                                </button>
+                                </x-button>
                                 @if ($location->employees_count == 0 && $location->attendances_count == 0)
                                     <form method="POST" action="{{ route('admin.locations.destroy', $location) }}"
                                         onsubmit="return confirmDelete()">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                            class="w-full flex items-center justify-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors">
+                                        <x-button type="danger" buttonType="submit" class="w-full">
                                             <x-fas-trash class="w-5 h-5 mr-2" />
                                             Delete Location
-                                        </button>
+                                        </x-button>
                                     </form>
                                 @endif
                             </div>

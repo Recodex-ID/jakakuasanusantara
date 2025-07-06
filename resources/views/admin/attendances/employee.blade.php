@@ -2,7 +2,7 @@
     <x-slot name="title">{{ $employee->user->name }} - Attendance Records</x-slot>
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="container mx-auto sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">
@@ -32,15 +32,18 @@
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-green-600">{{ $attendances->where('status', 'present')->count() }}</div>
+                            <div class="text-2xl font-bold text-green-600">
+                                {{ $attendances->where('status', 'present')->count() }}</div>
                             <div class="text-sm text-gray-600">Present</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-red-600">{{ $attendances->where('status', 'absent')->count() }}</div>
+                            <div class="text-2xl font-bold text-red-600">
+                                {{ $attendances->where('status', 'absent')->count() }}</div>
                             <div class="text-sm text-gray-600">Absent</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-yellow-600">{{ $attendances->where('status', 'late')->count() }}</div>
+                            <div class="text-2xl font-bold text-yellow-600">
+                                {{ $attendances->where('status', 'late')->count() }}</div>
                             <div class="text-sm text-gray-600">Late</div>
                         </div>
                         <div class="text-center">
@@ -55,7 +58,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Attendance Records</h3>
-                    
+
                     @if ($attendances->isEmpty())
                         <div class="text-center py-8">
                             <x-fas-calendar-times class="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -66,12 +69,24 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Check In</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Check Out</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Date</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Location</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Check In</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Check Out</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Status</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -90,10 +105,15 @@
                                                 {{ $attendance->check_out ? $attendance->check_out->format('H:i') : '-' }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                    {{ $attendance->status === 'present' ? 'bg-green-100 text-green-800' : 
-                                                       ($attendance->status === 'absent' ? 'bg-red-100 text-red-800' : 
-                                                       ($attendance->status === 'late' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800')) }}">
+                                                <span
+                                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                                    {{ $attendance->status === 'present'
+                                                        ? 'bg-green-100 text-green-800'
+                                                        : ($attendance->status === 'absent'
+                                                            ? 'bg-red-100 text-red-800'
+                                                            : ($attendance->status === 'late'
+                                                                ? 'bg-yellow-100 text-yellow-800'
+                                                                : 'bg-gray-100 text-gray-800')) }}">
                                                     {{ ucfirst($attendance->status) }}
                                                 </span>
                                             </td>

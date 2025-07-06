@@ -21,30 +21,13 @@ class EmployeeController extends Controller
         $this->faceApiService = $faceApiService;
     }
 
-    public function index(Request $request)
+    public function index()
     {
-        $query = Employee::with(['user', 'location']);
-
-        if ($request->has('search')) {
-            $search = $request->get('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('employee_id', 'like', "%{$search}%")
-                    ->orWhereHas('user', function ($userQuery) use ($search) {
-                        $userQuery->where('name', 'like', "%{$search}%");
-                    })
-                    ->orWhere('department', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->has('status')) {
-            $query->where('status', $request->get('status'));
-        }
-
-        $employees = $query->paginate(15);
+        $employees = Employee::with(['user', 'location'])->paginate(15);
 
         // Check face enrollment status for each employee
         $enrolledFaces = $this->getEnrolledFaces();
-        
+
         foreach ($employees as $employee) {
             $employee->face_enrolled = in_array($employee->employee_id, $enrolledFaces);
         }
@@ -56,14 +39,14 @@ class EmployeeController extends Controller
     {
         try {
             $response = $this->faceApiService->listAllFaces();
-            
+
             if (isset($response['status']) && $response['status'] === '200' && isset($response['faces'])) {
                 return array_column($response['faces'], 'user_id');
             }
         } catch (\Exception $e) {
             // If face API is unavailable, return empty array
         }
-        
+
         return [];
     }
 
@@ -80,13 +63,13 @@ class EmployeeController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'username' => 'required|string|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'employee_id' => 'required|string|unique:employees',
             'department' => 'nullable|string|max:255',
             'position' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
             'gender' => 'nullable|in:male,female',
+            'role' => 'required|in:employee,admin',
             'location_id' => 'nullable|exists:locations,id',
             'work_start_time' => 'nullable|date_format:H:i',
             'work_end_time' => 'nullable|date_format:H:i|after:work_start_time',
@@ -101,12 +84,12 @@ class EmployeeController extends Controller
                 'email' => $request->email,
                 'username' => $request->username,
                 'password' => Hash::make($request->password),
-                'role' => 'employee',
+                'role' => $request->role,
             ]);
 
             $employee = Employee::create([
                 'user_id' => $user->id,
-                'employee_id' => $request->employee_id,
+                'employee_id' => $this->generateEmployeeId($request->role),
                 'location_id' => $request->location_id,
                 'department' => $request->department,
                 'position' => $request->position,
@@ -114,7 +97,7 @@ class EmployeeController extends Controller
                 'address' => $request->address,
                 'date_of_birth' => $request->date_of_birth,
                 'gender' => $request->gender,
-                'work_start_time' => $request->work_start_time ?: '08:00',
+                'work_start_time' => $request->work_start_time ?: '09:00',
                 'work_end_time' => $request->work_end_time ?: '17:00',
                 'late_tolerance_minutes' => $request->late_tolerance_minutes ?: 15,
                 'work_days' => $request->work_days ?: ['1', '2', '3', '4', '5'],
@@ -179,6 +162,7 @@ class EmployeeController extends Controller
             'address' => 'nullable|string',
             'date_of_birth' => 'nullable|date',
             'gender' => 'nullable|in:male,female',
+            'role' => 'required|in:employee,admin',
             'status' => 'required|in:active,inactive',
             'location_id' => 'nullable|exists:locations,id',
             'work_start_time' => 'nullable|date_format:H:i',
@@ -193,6 +177,7 @@ class EmployeeController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'username' => $request->username,
+                'role' => $request->role,
             ];
 
             if ($request->filled('password')) {
@@ -225,10 +210,41 @@ class EmployeeController extends Controller
 
     public function destroy(Employee $employee)
     {
-        $employee->user->delete();
+        DB::transaction(function () use ($employee) {
+            // Delete face from face recognition system
+            try {
+                $this->faceApiService->deleteEmployeeFace($employee->employee_id);
+            } catch (\Exception) {
+                // Continue with deletion even if face API fails
+            }
+
+            // Delete user (will cascade delete employee)
+            $employee->user->delete();
+        });
 
         return redirect()->route('admin.employees.index')
             ->with('success', 'Employee deleted successfully.');
+    }
+
+    private function generateEmployeeId(string $role): string
+    {
+        $prefix = $role === 'admin' ? 'ADM' : 'EMP';
+        $year = now()->format('Y');
+        
+        $lastEmployee = Employee::join('users', 'employees.user_id', '=', 'users.id')
+            ->where('users.role', $role)
+            ->whereYear('employees.created_at', $year)
+            ->orderBy('employees.created_at', 'desc')
+            ->first();
+
+        if ($lastEmployee) {
+            $lastNumber = (int) substr($lastEmployee->employee_id, -4);
+            $nextNumber = $lastNumber + 1;
+        } else {
+            $nextNumber = 1;
+        }
+
+        return $prefix . $year . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
     }
 
 }

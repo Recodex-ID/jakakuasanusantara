@@ -22,6 +22,10 @@ return new class extends Migration {
             $table->date('date_of_birth')->nullable();
             $table->enum('gender', ['male', 'female'])->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->time('work_start_time');
+            $table->time('work_end_time');
+            $table->integer('late_tolerance_minutes');
+            $table->json('work_days')->nullable();
             $table->timestamps();
         });
     }

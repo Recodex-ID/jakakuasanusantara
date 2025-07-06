@@ -5,7 +5,7 @@
     <x-flash-messages />
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="container mx-auto sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">
@@ -57,6 +57,11 @@
                                     <x-forms.input label="Confirm Password *" name="password_confirmation"
                                         type="password" placeholder="••••••••" required />
                                 </div>
+
+                                <div>
+                                    <x-forms.select label="Role *" name="role" :options="['employee' => 'Employee', 'admin' => 'Admin']" :selected="old('role', 'employee')"
+                                        required />
+                                </div>
                             </div>
                         </div>
 
@@ -65,10 +70,11 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Employee Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <x-forms.input label="Employee ID *" name="employee_id" type="text"
-                                        placeholder="e.g., EMP001" value="{{ old('employee_id') }}" required />
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Employee ID</label>
+                                    <p class="text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-md border">
+                                        Employee ID will be generated automatically
+                                    </p>
                                 </div>
-
 
                                 <div>
                                     <x-forms.input label="Phone Number" name="phone" type="text"
@@ -106,14 +112,10 @@
                         <div class="border-b border-gray-200 pb-6">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Location Assignment</h3>
                             <div>
-                                <x-forms.select 
-                                    label="Assigned Location" 
-                                    name="location_id" 
-                                    :options="$locations->pluck('name', 'id')->prepend('-- Select Location --', '')" 
+                                <x-forms.select label="Assigned Location" name="location_id" :options="$locations->pluck('name', 'id')->prepend('-- Select Location --', '')"
                                     :selected="old('location_id')" />
-                                <p class="mt-1 text-sm text-gray-500">Employee will be able to check attendance at this location</p>
                             </div>
-                            @if($locations->isEmpty())
+                            @if ($locations->isEmpty())
                                 <div class="text-center py-6 text-gray-500">
                                     <p>No locations available. Please create locations first.</p>
                                     <a href="{{ route('admin.locations.create') }}"
@@ -131,7 +133,7 @@
                                 <!-- Working Hours -->
                                 <div>
                                     <x-forms.input label="Work Start Time" name="work_start_time" type="time"
-                                        value="{{ old('work_start_time', '08:00') }}" />
+                                        value="{{ old('work_start_time', '09:00') }}" />
                                 </div>
 
                                 <div>
@@ -139,12 +141,11 @@
                                         value="{{ old('work_end_time', '17:00') }}" />
                                 </div>
 
-
                                 <!-- Late Tolerance -->
                                 <div>
-                                    <x-forms.input label="Late Tolerance (Minutes)" name="late_tolerance_minutes" type="number"
-                                        placeholder="15" min="0" max="60" value="{{ old('late_tolerance_minutes', '15') }}" />
-                                    <p class="mt-1 text-sm text-gray-500">Grace period before marking as late</p>
+                                    <x-forms.input label="Late Tolerance (Minutes)" name="late_tolerance_minutes"
+                                        type="number" placeholder="15" min="0" max="60"
+                                        value="{{ old('late_tolerance_minutes', '15') }}" />
                                 </div>
 
                                 <!-- Work Days -->
@@ -154,25 +155,25 @@
                                         @php
                                             $days = [
                                                 '1' => 'Monday',
-                                                '2' => 'Tuesday', 
+                                                '2' => 'Tuesday',
                                                 '3' => 'Wednesday',
                                                 '4' => 'Thursday',
                                                 '5' => 'Friday',
                                                 '6' => 'Saturday',
-                                                '0' => 'Sunday'
+                                                '0' => 'Sunday',
                                             ];
                                             $defaultWorkDays = old('work_days', ['1', '2', '3', '4', '5']);
                                         @endphp
-                                        @foreach($days as $value => $label)
+                                        @foreach ($days as $value => $label)
                                             <label class="flex items-center">
-                                                <input type="checkbox" name="work_days[]" value="{{ $value }}"
+                                                <input type="checkbox" name="work_days[]"
+                                                    value="{{ $value }}"
                                                     {{ in_array($value, $defaultWorkDays) ? 'checked' : '' }}
-                                                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                                    class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 h-4 w-4">
                                                 <span class="ml-2 text-sm text-gray-700">{{ $label }}</span>
                                             </label>
                                         @endforeach
                                     </div>
-                                    <p class="mt-1 text-sm text-gray-500">Select employee's working days</p>
                                 </div>
                             </div>
                         </div>
@@ -194,7 +195,6 @@
     </div>
 
     <script>
-
         // Phone number formatting
         document.getElementById('phone').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
