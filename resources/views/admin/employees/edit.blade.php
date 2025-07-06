@@ -81,15 +81,6 @@
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Employee Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Employee ID</label>
-                                    <p class="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded-md border">
-                                        {{ $employee->employee_id }}
-                                    </p>
-                                    <input type="hidden" name="employee_id" value="{{ $employee->employee_id }}">
-                                </div>
-
-
-                                <div>
                                     <x-forms.input label="Phone Number" name="phone" type="text"
                                         placeholder="e.g., +62812345678" value="{{ old('phone', $employee->phone) }}" />
                                 </div>

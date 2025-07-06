@@ -9,23 +9,9 @@ use Illuminate\Validation\Rule;
 
 class LocationController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = Location::withCount(['employees', 'attendances']);
-
-        if ($request->has('search')) {
-            $search = $request->get('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('address', 'like', "%{$search}%");
-            });
-        }
-
-        if ($request->has('status')) {
-            $query->where('status', $request->get('status'));
-        }
-
-        $locations = $query->paginate(15);
+        $locations = Location::withCount(['employees', 'attendances'])->paginate(15);
 
         return view('admin.locations.index', compact('locations'));
     }

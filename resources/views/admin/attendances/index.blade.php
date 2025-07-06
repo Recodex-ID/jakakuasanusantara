@@ -27,120 +27,101 @@
                 </div>
             </div>
 
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                                    <x-fas-check class="w-5 h-5 text-green-600" />
-                                </div>
-                            </div>
-                            <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-500">Present Today</div>
-                                <div class="text-2xl font-bold text-green-600" id="present-count">
-                                    {{ $stats['present'] ?? 0 }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                                    <x-fas-times class="w-5 h-5 text-red-600" />
-                                </div>
-                            </div>
-                            <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-500">Absent Today</div>
-                                <div class="text-2xl font-bold text-red-600" id="absent-count">
-                                    {{ $stats['absent'] ?? 0 }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                                    <x-fas-clock class="w-5 h-5 text-yellow-600" />
-                                </div>
-                            </div>
-                            <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-500">Late Arrivals</div>
-                                <div class="text-2xl font-bold text-yellow-600" id="late-count">
-                                    {{ $stats['late'] ?? 0 }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <x-fas-users class="w-5 h-5 text-blue-600" />
-                                </div>
-                            </div>
-                            <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-500">Total Employees</div>
-                                <div class="text-2xl font-bold text-blue-600" id="total-employees">
-                                    {{ $stats['total_employees'] ?? 0 }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Filters -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
                     <form method="GET" action="{{ route('admin.attendances.index') }}"
-                        class="flex flex-wrap gap-4 items-end">
-                        <div class="min-w-48">
-                            <x-forms.input type="date" name="date" id="date" label="Date"
-                                value="{{ request('date', today()->format('Y-m-d')) }}" />
+                        class="flex flex-wrap items-end gap-4">
+                        <div class="flex-1 min-w-48">
+                            <x-forms.input type="month" name="month" label="Filter by Month"
+                                value="{{ request('month') }}" />
                         </div>
-                        <div class="min-w-48">
-                            <x-forms.select name="location" id="location" label="Location">
-                                <option value="">All Locations</option>
-                                @foreach ($locations as $location)
-                                    <option value="{{ $location->id }}"
-                                        {{ request('location') == $location->id ? 'selected' : '' }}>
-                                        {{ $location->name }}
-                                    </option>
-                                @endforeach
-                            </x-forms.select>
-                        </div>
-                        <div class="min-w-32">
-                            <x-forms.select name="status" id="status" label="Status">
-                                <option value="">All Status</option>
-                                <option value="present" {{ request('status') === 'present' ? 'selected' : '' }}>
-                                    Present</option>
-                                <option value="absent" {{ request('status') === 'absent' ? 'selected' : '' }}>Absent
-                                </option>
-                                <option value="late" {{ request('status') === 'late' ? 'selected' : '' }}>Late
-                                </option>
-                            </x-forms.select>
+                        <div class="flex-1 min-w-48">
+                            <x-forms.select name="employee_id" label="Filter by Employee" :options="$employees->pluck('user.name', 'id')->prepend('All Employees', '')"
+                                :selected="request('employee_id')" />
                         </div>
                         <div class="flex gap-2">
                             <x-button type="primary" buttonType="submit">
+                                <x-fas-filter class="w-4 h-4 mr-2" />
                                 Filter
                             </x-button>
                             <a href="{{ route('admin.attendances.index') }}"
-                                class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-md transition-colors">
-                                Reset
+                                class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-colors">
+                                Clear
                             </a>
                         </div>
                     </form>
                 </div>
             </div>
+
+            <!-- Filter Statistics -->
+            @if ((request('month') || request('employee_id')) && !empty($stats))
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                                        <x-fas-calendar class="w-5 h-5 text-blue-600" />
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-500">Total Records</div>
+                                    <div class="text-2xl font-bold text-blue-600">{{ $stats['total'] ?? 0 }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                        <x-fas-check class="w-5 h-5 text-green-600" />
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-500">Present</div>
+                                    <div class="text-2xl font-bold text-green-600">{{ $stats['present'] ?? 0 }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                                        <x-fas-clock class="w-5 h-5 text-yellow-600" />
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-500">Late</div>
+                                    <div class="text-2xl font-bold text-yellow-600">{{ $stats['late'] ?? 0 }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                                        <x-fas-times class="w-5 h-5 text-red-600" />
+                                    </div>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-500">Absent</div>
+                                    <div class="text-2xl font-bold text-red-600">{{ $stats['absent'] ?? 0 }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <!-- Attendance Table -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -223,12 +204,18 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
+                                        @php
+                                            $statusClasses = [
+                                                'present' => 'bg-green-100 text-green-800',
+                                                'late' => 'bg-yellow-100 text-yellow-800',
+                                                'absent' => 'bg-red-100 text-red-800',
+                                                'default' => 'bg-gray-100 text-gray-800',
+                                            ];
+                                            $class = $statusClasses[$attendance->status] ?? $statusClasses['default'];
+                                        @endphp
+
                                         <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                     @if ($attendance->status === 'present') bg-green-100 text-green-800
-                                                     @elseif($attendance->status === 'late') bg-yellow-100 text-yellow-800
-                                                     @elseif($attendance->status === 'absent') bg-red-100 text-red-800
-                                                     @else bg-gray-100 text-gray-800 @endif">
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $class }}">
                                             {{ ucfirst($attendance->status) }}
                                         </span>
                                     </td>
@@ -273,34 +260,5 @@
         function refreshData() {
             location.reload();
         }
-
-        // Auto-refresh every 30 seconds
-        setInterval(function() {
-            // Only auto-refresh if we're viewing today's data
-            const dateInput = document.getElementById('date');
-            const today = new Date().toISOString().split('T')[0];
-
-            if (dateInput.value === today || !dateInput.value) {
-                // Refresh stats without full page reload
-                fetch(window.location.href, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.stats) {
-                            document.getElementById('present-count').textContent = data.stats.present || 0;
-                            document.getElementById('absent-count').textContent = data.stats.absent || 0;
-                            document.getElementById('late-count').textContent = data.stats.late || 0;
-                            document.getElementById('total-employees').textContent = data.stats
-                                .total_employees || 0;
-                        }
-                    })
-                    .catch(error => {
-                        // Silently ignore errors for auto-refresh
-                    });
-            }
-        }, 30000); // 30 seconds
     </script>
 </x-layouts.app>

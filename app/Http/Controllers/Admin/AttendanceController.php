@@ -17,37 +17,57 @@ class AttendanceController extends Controller
     {
         $query = Attendance::with(['employee.user', 'location']);
 
-        if ($request->has('date_from') && $request->date_from) {
-            $query->where('date', '>=', $request->date_from);
+        // Filter by month if provided
+        if ($request->has('month') && $request->month) {
+            $monthYear = explode('-', $request->month);
+            $year = $monthYear[0];
+            $month = $monthYear[1];
+            
+            $query->whereYear('date', $year)
+                  ->whereMonth('date', $month);
         }
 
-        if ($request->has('date_to') && $request->date_to) {
-            $query->where('date', '<=', $request->date_to);
-        }
-
+        // Filter by employee if provided
         if ($request->has('employee_id') && $request->employee_id) {
             $query->where('employee_id', $request->employee_id);
-        }
-
-        if ($request->has('location_id') && $request->location_id) {
-            $query->where('location_id', $request->location_id);
-        }
-
-        if ($request->has('status') && $request->status) {
-            $query->where('status', $request->status);
         }
 
         $attendances = $query->orderBy('date', 'desc')
             ->orderBy('check_in', 'desc')
             ->paginate(20);
 
-        $employees = Employee::with('user')
-            ->where('status', 'active')
-            ->get();
-        
-        $locations = Location::where('status', 'active')->get();
+        // Calculate statistics
+        $stats = [];
+        if (($request->has('month') && $request->month) || ($request->has('employee_id') && $request->employee_id)) {
+            $statsQuery = Attendance::query();
+            
+            if ($request->has('month') && $request->month) {
+                $monthYear = explode('-', $request->month);
+                $year = $monthYear[0];
+                $month = $monthYear[1];
+                
+                $statsQuery->whereYear('date', $year)
+                          ->whereMonth('date', $month);
+            }
+            
+            if ($request->has('employee_id') && $request->employee_id) {
+                $statsQuery->where('employee_id', $request->employee_id);
+            }
+            
+            $filteredAttendances = $statsQuery->get();
+                
+            $stats = [
+                'total' => $filteredAttendances->count(),
+                'present' => $filteredAttendances->where('status', 'present')->count(),
+                'late' => $filteredAttendances->where('status', 'late')->count(),
+                'absent' => $filteredAttendances->where('status', 'absent')->count(),
+            ];
+        }
 
-        return view('admin.attendances.index', compact('attendances', 'employees', 'locations'));
+        // Get employees for dropdown
+        $employees = Employee::with('user')->where('status', 'active')->get();
+
+        return view('admin.attendances.index', compact('attendances', 'stats', 'employees'));
     }
 
     public function create()
@@ -200,15 +220,6 @@ class AttendanceController extends Controller
         return view('admin.attendances.monitor', compact('todayAttendances', 'recentLogs', 'stats'));
     }
 
-    public function employee(Employee $employee)
-    {
-        $attendances = Attendance::with(['location', 'attendanceLogs'])
-            ->where('employee_id', $employee->id)
-            ->orderBy('date', 'desc')
-            ->paginate(20);
-
-        return view('admin.attendances.employee', compact('employee', 'attendances'));
-    }
 
     public function bulkUpdate(Request $request)
     {

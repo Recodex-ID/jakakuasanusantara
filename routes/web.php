@@ -51,8 +51,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('attendances', Admin\AttendanceController::class);
     Route::get('attendances-monitor', [Admin\AttendanceController::class, 'monitor'])
         ->name('attendances.monitor');
-    Route::get('attendances/employee/{employee}', [Admin\AttendanceController::class, 'employee'])
-        ->name('attendances.employee');
     Route::post('attendances/bulk-update', [Admin\AttendanceController::class, 'bulkUpdate'])
         ->name('attendances.bulk-update');
     

@@ -97,10 +97,16 @@
                                         <div class="text-sm text-gray-900">{{ $employee->employee_id }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
+                                        @php
+                                            $roleClasses = [
+                                                'admin' => 'bg-blue-100 text-blue-800',
+                                                'default' => 'bg-green-100 text-green-800',
+                                            ];
+                                            $class = $roleClasses[$employee->user->role] ?? $roleClasses['default'];
+                                        @endphp
+
                                         <span
-                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                            @if ($employee->user->role === 'admin') bg-blue-100 text-blue-800
-                                            @else bg-green-100 text-green-800 @endif">
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $class }}">
                                             {{ ucfirst($employee->user->role) }}
                                         </span>
                                     </td>

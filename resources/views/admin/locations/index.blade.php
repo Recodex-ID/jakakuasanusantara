@@ -23,32 +23,6 @@
                 </div>
             </div>
 
-            <!-- Filters -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                <div class="p-6">
-                    <form method="GET" action="{{ route('admin.locations.index') }}"
-                        class="flex flex-wrap gap-4 items-end">
-                        <div class="flex-1 min-w-64">
-                            <x-forms.input label="Search" name="search" type="text"
-                                placeholder="Search by location name or address..." value="{{ request('search') }}" />
-                        </div>
-                        <div class="min-w-32">
-                            <x-forms.select label="Status" name="status" placeholder="All Status" :options="['active' => 'Active', 'inactive' => 'Inactive']"
-                                :selected="request('status')" />
-                        </div>
-                        <div class="flex gap-2">
-                            <x-button type="primary" buttonType="submit">
-                                Search
-                            </x-button>
-                            <a href="{{ route('admin.locations.index') }}"
-                                class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-md transition-colors">
-                                Clear
-                            </a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
             <!-- Locations Table -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="overflow-x-auto">
