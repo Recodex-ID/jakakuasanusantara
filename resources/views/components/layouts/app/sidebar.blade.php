@@ -23,15 +23,6 @@
                     <x-layouts.sidebar-link href="{{ route('admin.attendances.index') }}" icon='fas-clock'
                         :active="request()->routeIs('admin.attendances*')">Attendance</x-layouts.sidebar-link>
 
-                    <!-- Reports -->
-                    <x-layouts.sidebar-two-level-link-parent title="Reports" icon="fas-chart-bar" :active="request()->routeIs('admin.reports*')">
-                        <x-layouts.sidebar-two-level-link href="{{ route('admin.reports.attendance') }}"
-                            icon='fas-chart-line' :active="request()->routeIs('admin.reports.attendance*')">Attendance Report</x-layouts.sidebar-two-level-link>
-                        <x-layouts.sidebar-two-level-link href="{{ route('admin.reports.summary') }}"
-                            icon='fas-chart-pie' :active="request()->routeIs('admin.reports.summary*')">Summary Report</x-layouts.sidebar-two-level-link>
-                        <x-layouts.sidebar-two-level-link href="{{ route('admin.reports.analytics') }}"
-                            icon='fas-chart-simple' :active="request()->routeIs('admin.reports.analytics*')">Analytics</x-layouts.sidebar-two-level-link>
-                    </x-layouts.sidebar-two-level-link-parent>
                 @endif
 
                 @if (auth()->user()->isEmployee())

@@ -17,11 +17,6 @@
                                 <x-fas-sync-alt class="w-5 h-5 mr-2" />
                                 Refresh
                             </button>
-                            <a href="{{ route('admin.reports.index') }}"
-                                class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">
-                                <x-fas-chart-bar class="w-5 h-5 mr-2" />
-                                View Reports
-                            </a>
                         </div>
                     </div>
                 </div>
