@@ -48,6 +48,12 @@
                                 </div>
 
                                 <div>
+                                    <x-forms.input label="Employee ID *" name="employee_id" type="text"
+                                        placeholder="Employee ID" value="{{ old('employee_id', $employee->employee_id) }}"
+                                        required readonly />
+                                </div>
+
+                                <div>
                                     <x-forms.input label="Email Address *" name="email" type="email"
                                         placeholder="your@email.com" value="{{ old('email', $employee->user->email) }}"
                                         required />

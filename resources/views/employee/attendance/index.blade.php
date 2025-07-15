@@ -15,8 +15,8 @@
                             <p class="text-gray-600">Use face recognition to check in or check out</p>
                         </div>
                         <div class="text-right">
-                            <div class="text-sm text-gray-500">{{ now()->format('l, F j, Y') }}</div>
-                            <div class="text-lg font-semibold text-gray-900">{{ now()->format('H:i') }}</div>
+                            <div class="text-sm text-gray-500">{{ now()->format('l, j F Y') }}</div>
+                            <div id="realtime-clock" class="text-lg font-semibold text-gray-900">{{ now()->format('H:i:s') }}</div>
                         </div>
                     </div>
                 </div>
@@ -54,11 +54,13 @@
 
                             <div class="text-center">
                                 <div class="text-sm font-medium text-gray-500 mb-2">Status</div>
-                                <span
-                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                                             @if ($todayAttendance->status === 'present') bg-green-100 text-green-800
-                                             @elseif($todayAttendance->status === 'late') bg-yellow-100 text-yellow-800
-                                             @else bg-gray-100 text-gray-800 @endif">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ 
+                                    [
+                                        'present' => 'bg-green-100 text-green-800',
+                                        'late' => 'bg-yellow-100 text-yellow-800',
+                                        'default' => 'bg-gray-100 text-gray-800'
+                                    ][$todayAttendance->status] ?? 'bg-gray-100 text-gray-800' 
+                                }}">
                                     {{ ucfirst($todayAttendance->status) }}
                                 </span>
                             </div>
@@ -121,22 +123,36 @@
                         <form id="attendanceForm" class="space-y-4">
                             @csrf
 
-                            <!-- Location Selection -->
+                            <!-- Assigned Location -->
                             <div>
-                                <label for="location_id" class="block text-sm font-medium text-gray-700 mb-2">
-                                    Select Location <span class="text-red-500">*</span>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Assigned Location
                                 </label>
-                                <select name="location_id" id="location_id" required
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                    <option value="">Choose a location...</option>
-                                    @foreach ($locations as $location)
-                                        <option value="{{ $location->id }}" data-lat="{{ $location->latitude }}"
-                                            data-lng="{{ $location->longitude }}"
-                                            data-radius="{{ $location->radius_meters }}">
-                                            {{ $location->name }} - {{ $location->address }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                @if ($locations->isNotEmpty())
+                                    @php $assignedLocation = $locations->first(); @endphp
+                                    <div class="w-full p-3 bg-gray-50 border border-gray-300 rounded-md">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="font-medium text-gray-900">{{ $assignedLocation->name }}</div>
+                                                <div class="text-sm text-gray-600">{{ $assignedLocation->address }}</div>
+                                            </div>
+                                            <div class="text-xs text-gray-500">
+                                                <div>Lat: {{ $assignedLocation->latitude }}</div>
+                                                <div>Lng: {{ $assignedLocation->longitude }}</div>
+                                                <div>Radius: {{ $assignedLocation->radius_meters }}m</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="location_id" value="{{ $assignedLocation->id }}" 
+                                           data-lat="{{ $assignedLocation->latitude }}" 
+                                           data-lng="{{ $assignedLocation->longitude }}"
+                                           data-radius="{{ $assignedLocation->radius_meters }}">
+                                @else
+                                    <div class="w-full p-3 bg-red-50 border border-red-300 rounded-md">
+                                        <div class="text-red-800 font-medium">No Location Assigned</div>
+                                        <div class="text-red-600 text-sm">Please contact your administrator to assign a work location.</div>
+                                    </div>
+                                @endif
                             </div>
 
                             <!-- Action Selection -->
@@ -221,16 +237,28 @@
         </div>
     </div>
 
-    <!-- Loading Modal -->
-    <div id="loadingModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div class="mt-3 text-center">
-                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
-                    <x-fas-spinner class="animate-spin h-6 w-6 text-blue-600" />
+    <!-- Loading Modal with Alpine.js -->
+    <div x-data="{modalIsOpen: false}" x-init="window.loadingModal = {
+        show: () => modalIsOpen = true,
+        hide: () => modalIsOpen = false
+    }">
+        <div x-cloak x-show="modalIsOpen" x-transition.opacity.duration.200ms x-trap.inert.noscroll="modalIsOpen" class="fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8" role="dialog" aria-modal="true" aria-labelledby="loadingModalTitle">
+            <!-- Modal Dialog -->
+            <div x-show="modalIsOpen" x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity" x-transition:enter-start="opacity-0 scale-50" x-transition:enter-end="opacity-100 scale-100" class="flex max-w-lg flex-col gap-4 overflow-hidden rounded-sm border border-neutral-300 bg-white text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300">
+                <!-- Dialog Header -->
+                <div class="flex items-center justify-between border-b border-neutral-300 bg-neutral-50/60 p-4 dark:border-neutral-700 dark:bg-neutral-950/20">
+                    <h3 id="loadingModalTitle" class="font-semibold tracking-wide text-neutral-900 dark:text-white">Processing Attendance</h3>
+                    <div class="w-5 h-5 flex items-center justify-center">
+                        <x-fas-spinner class="animate-spin h-4 w-4 text-blue-600" />
+                    </div>
                 </div>
-                <h3 class="text-lg font-medium text-gray-900 mt-2">Processing Attendance</h3>
-                <p class="text-sm text-gray-500 mt-1" id="loadingStatus">Please wait while we verify your face and
-                    record attendance...</p>
+                <!-- Dialog Body -->
+                <div class="px-4 py-8 text-center"> 
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
+                        <x-fas-camera class="h-6 w-6 text-blue-600" />
+                    </div>
+                    <p id="loadingStatus">Please wait while we verify your face and record attendance...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -252,12 +280,13 @@
             const timeString = now.toLocaleTimeString('en-US', {
                 hour12: false,
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
+                second: '2-digit'
             });
 
-            const timeDisplay = document.querySelector('.text-lg.font-semibold.text-gray-900');
-            if (timeDisplay) {
-                timeDisplay.textContent = timeString;
+            const clockDisplay = document.getElementById('realtime-clock');
+            if (clockDisplay) {
+                clockDisplay.textContent = timeString;
             }
         }
 
@@ -296,7 +325,7 @@
                     <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
                     <span class="text-green-600">Location detected</span>
                 `;
-                coords.textContent = `${userLocation.lat.toFixed(6)}, ${userLocation.lng.toFixed(6)}`;
+                coords.textContent = `${userLocation.lat.toFixed(8)}, ${userLocation.lng.toFixed(8)}`;
                 info.classList.remove('hidden');
             } else {
                 status.innerHTML = `
@@ -312,14 +341,13 @@
         }
 
         function updateLocationDistance() {
-            const locationSelect = document.getElementById('location_id');
-            const selectedOption = locationSelect.options[locationSelect.selectedIndex];
+            const locationInput = document.querySelector('input[name="location_id"]');
             const distanceEl = document.getElementById('distance');
 
-            if (selectedOption && selectedOption.value && userLocation) {
-                const locationLat = parseFloat(selectedOption.dataset.lat);
-                const locationLng = parseFloat(selectedOption.dataset.lng);
-                const radius = parseInt(selectedOption.dataset.radius);
+            if (locationInput && locationInput.value && userLocation) {
+                const locationLat = parseFloat(locationInput.dataset.lat);
+                const locationLng = parseFloat(locationInput.dataset.lng);
+                const radius = parseInt(locationInput.dataset.radius);
 
                 const distance = calculateDistance(
                     userLocation.lat, userLocation.lng,
@@ -357,10 +385,10 @@
 
         function updateSubmitButton() {
             const submitBtn = document.getElementById('submitBtn');
-            const locationSelect = document.getElementById('location_id');
+            const locationInput = document.querySelector('input[name="location_id"]');
             const actionInputs = document.querySelectorAll('input[name="action"]');
 
-            const hasLocation = locationSelect.value !== '';
+            const hasLocation = locationInput && locationInput.value !== '';
             const hasAction = Array.from(actionInputs).some(input => input.checked && !input.disabled);
             const hasGPS = userLocation !== null;
             const hasCamera = stream !== null;
@@ -461,20 +489,24 @@
             });
         }
 
-        document.getElementById('location_id').addEventListener('change', updateLocationDistance);
+        // Auto-update location distance for assigned location
+        if (document.querySelector('input[name="location_id"]')) {
+            updateLocationDistance();
+        }
 
         document.getElementById('attendanceForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            document.getElementById('loadingModal').classList.remove('hidden');
+            // Show loading modal using Alpine.js
+            window.loadingModal.show();
 
             try {
                 const faceImage = await capturePhoto();
                 const formData = new FormData(this);
 
                 formData.append('face_image', faceImage);
-                formData.append('latitude', userLocation.lat);
-                formData.append('longitude', userLocation.lng);
+                formData.append('latitude', userLocation.lat.toFixed(8));
+                formData.append('longitude', userLocation.lng.toFixed(8));
 
                 const response = await fetch('{{ route('employee.attendance.record') }}', {
                     method: 'POST',
@@ -489,17 +521,22 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alert('Attendance recorded successfully!');
-                    window.location.reload();
+                    // Update loading status for success
+                    document.getElementById('loadingStatus').textContent = 'Attendance recorded successfully!';
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
                 } else {
+                    // Hide modal and show error
+                    window.loadingModal.hide();
                     alert('Failed to record attendance: ' + data.message);
                 }
 
             } catch (error) {
+                // Hide modal and show error
+                window.loadingModal.hide();
                 alert('An error occurred while recording attendance');
                 console.error('Attendance error:', error);
-            } finally {
-                document.getElementById('loadingModal').classList.add('hidden');
             }
         });
 

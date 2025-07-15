@@ -5,7 +5,7 @@
     <x-flash-messages />
 
     <div class="py-6">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="container mx-auto sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900">
@@ -45,12 +45,13 @@
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Status</label>
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-1
-                                                 @if ($attendance->status === 'present') bg-green-100 text-green-800
-                                                 @elseif($attendance->status === 'late') bg-yellow-100 text-yellow-800
-                                                 @elseif($attendance->status === 'absent') bg-red-100 text-red-800
-                                                 @else bg-gray-100 text-gray-800 @endif">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-1 {{
+                                        [
+                                            'present' => 'bg-green-100 text-green-800',
+                                            'late'    => 'bg-yellow-100 text-yellow-800',
+                                            'absent'  => 'bg-red-100 text-red-800',
+                                        ][$attendance->status] ?? 'bg-gray-100 text-gray-800'
+                                    }}">
                                         {{ ucfirst($attendance->status) }}
                                     </span>
                                 </div>

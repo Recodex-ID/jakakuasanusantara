@@ -50,8 +50,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 // Employee Routes
 Route::middleware(['auth', 'employee', 'ensure.employee.profile'])->prefix('employee')->name('employee.')->group(function () {
     Route::get('dashboard', [Employee\DashboardController::class, 'index'])->name('dashboard');
-    Route::get('profile', [Employee\DashboardController::class, 'profile'])->name('profile');
-    Route::put('profile', [Employee\DashboardController::class, 'updateProfile'])->name('profile.update');
     Route::get('attendance-stats', [Employee\DashboardController::class, 'attendanceStats'])->name('attendance.stats');
 
     // Attendance

@@ -60,7 +60,7 @@
                         </div>
                         <div class="text-right">
                             <div class="text-sm text-gray-500">{{ now()->format('l, F j, Y') }}</div>
-                            <div class="text-lg font-semibold text-gray-900">{{ now()->format('H:i') }}</div>
+                            <div id="realtime-clock" class="text-lg font-semibold text-gray-900">{{ now()->format('H:i:s') }}</div>
                         </div>
                     </div>
                 </div>
@@ -300,21 +300,21 @@
     </div>
 
     <script>
-        // Auto-refresh current time
-        setInterval(function() {
+        // Auto-refresh current time with seconds
+        function updateTime() {
             const now = new Date();
             const timeString = now.toLocaleTimeString('en-US', {
                 hour12: false,
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
+                second: '2-digit'
             });
 
-            // Find and update time display if it exists
-            const timeDisplay = document.querySelector('.text-lg.font-semibold.text-gray-900');
-            if (timeDisplay) {
-                timeDisplay.textContent = timeString;
+            const clockDisplay = document.getElementById('realtime-clock');
+            if (clockDisplay) {
+                clockDisplay.textContent = timeString;
             }
-        }, 1000);
+        }
 
         // Dismiss alert function
         function dismissAlert() {
@@ -326,8 +326,13 @@
             }
         }
 
-        // Check if alert was dismissed in this session
+        // Initialize everything when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize realtime clock
+            updateTime();
+            setInterval(updateTime, 1000);
+
+            // Check if alert was dismissed in this session
             if (sessionStorage.getItem('faceEnrollmentAlertDismissed') === 'true') {
                 const alert = document.querySelector('.bg-yellow-50');
                 if (alert) {

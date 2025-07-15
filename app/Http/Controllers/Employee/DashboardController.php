@@ -39,47 +39,6 @@ class DashboardController extends Controller
         ));
     }
 
-    public function profile()
-    {
-        $employee = Auth::user()->employee;
-        
-        if (!$employee) {
-            return redirect()->route('dashboard')
-                ->with('error', 'Employee profile not found.');
-        }
-
-        $employee->load(['user', 'location']);
-
-        return view('employee.profile', compact('employee'));
-    }
-
-    public function updateProfile(Request $request)
-    {
-        $employee = Auth::user()->employee;
-        
-        if (!$employee) {
-            return redirect()->route('dashboard')
-                ->with('error', 'Employee profile not found.');
-        }
-
-        $request->validate([
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string',
-            'date_of_birth' => 'nullable|date',
-            'gender' => 'nullable|in:male,female',
-        ]);
-
-        $employee->update($request->only([
-            'phone',
-            'address', 
-            'date_of_birth',
-            'gender'
-        ]));
-
-        return redirect()->route('employee.profile')
-            ->with('success', 'Profile updated successfully.');
-    }
-
     public function attendanceStats(Request $request)
     {
         $employee = Auth::user()->employee;

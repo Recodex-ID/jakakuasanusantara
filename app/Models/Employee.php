@@ -80,7 +80,7 @@ class Employee extends Model
             return false;
         }
 
-        $workStart = \Carbon\Carbon::createFromFormat('H:i', $this->work_start_time)
+        $workStart = $this->parseTimeField($this->work_start_time)
             ->setDateFrom($checkInTime);
 
         $tolerance = $this->late_tolerance_minutes ?? 15;
@@ -136,11 +136,30 @@ class Employee extends Model
             return true; // Default to allow if no schedule set
         }
 
-        $workStart = \Carbon\Carbon::createFromFormat('H:i', $this->work_start_time)
+        $workStart = $this->parseTimeField($this->work_start_time)
             ->setDateFrom($time);
-        $workEnd = \Carbon\Carbon::createFromFormat('H:i', $this->work_end_time)
+        $workEnd = $this->parseTimeField($this->work_end_time)
             ->setDateFrom($time);
 
         return $time->between($workStart, $workEnd);
+    }
+
+    /**
+     * Parse time field that could be in H:i or H:i:s format
+     */
+    private function parseTimeField(string $timeString): \Carbon\Carbon
+    {
+        // Try H:i:s format first (database format)
+        try {
+            return \Carbon\Carbon::createFromFormat('H:i:s', $timeString);
+        } catch (\InvalidArgumentException $e) {
+            // Fallback to H:i format
+            try {
+                return \Carbon\Carbon::createFromFormat('H:i', $timeString);
+            } catch (\InvalidArgumentException $e) {
+                // If both fail, use Carbon's general parse
+                return \Carbon\Carbon::parse($timeString);
+            }
+        }
     }
 }

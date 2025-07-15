@@ -138,6 +138,16 @@ class AttendanceController extends Controller
             ], 422);
         }
 
+        // Validate working hours
+        $now = Carbon::now();
+        $workingHoursValidation = $this->validateWorkingHours($employee, $request->action, $now);
+        if (!$workingHoursValidation['valid']) {
+            return response()->json([
+                'success' => false,
+                'message' => $workingHoursValidation['message']
+            ], 422);
+        }
+
         try {
             $faceVerification = $this->verifyFace($employee, $request->face_image);
 
@@ -414,5 +424,62 @@ class AttendanceController extends Controller
                 'message' => 'Face verification service is currently unavailable. Please try again later.'
             ];
         }
+    }
+
+    private function validateWorkingHours(Employee $employee, string $action, Carbon $time): array
+    {
+        // Check if it's a work day
+        if (!$employee->isWorkDay($time)) {
+            $dayName = $time->format('l');
+            return [
+                'valid' => false,
+                'message' => "Today is {$dayName}. You can only record attendance on work days."
+            ];
+        }
+
+        $workingHours = $employee->getWorkingHours();
+        $workStart = Carbon::createFromFormat('H:i', substr($workingHours['start'], 0, 5))->setDateFrom($time);
+        $workEnd = Carbon::createFromFormat('H:i', substr($workingHours['end'], 0, 5))->setDateFrom($time);
+
+        if ($action === 'check_in') {
+            // Allow check-in from 1 hour before work start time
+            $allowedCheckInStart = $workStart->copy()->subHour();
+            
+            if ($time->lessThan($allowedCheckInStart)) {
+                return [
+                    'valid' => false,
+                    'message' => "Check-in is only allowed from {$allowedCheckInStart->format('H:i')} onwards. Your work starts at {$workStart->format('H:i')}."
+                ];
+            }
+
+            // Don't allow check-in too late (after work end time)
+            if ($time->greaterThan($workEnd)) {
+                return [
+                    'valid' => false,
+                    'message' => "Check-in is too late. Work hours are {$workStart->format('H:i')} - {$workEnd->format('H:i')}."
+                ];
+            }
+        }
+
+        if ($action === 'check_out') {
+            // Allow check-out from work start time until 2 hours after work end time
+            $allowedCheckOutEnd = $workEnd->copy()->addHours(2);
+            
+            if ($time->lessThan($workStart)) {
+                return [
+                    'valid' => false,
+                    'message' => "Check-out is too early. Work hours are {$workStart->format('H:i')} - {$workEnd->format('H:i')}."
+                ];
+            }
+
+            if ($time->greaterThan($allowedCheckOutEnd)) {
+                return [
+                    'valid' => false,
+                    'message' => "Check-out is too late. Please check-out before {$allowedCheckOutEnd->format('H:i')}."
+                ];
+            }
+        }
+
+        return ['valid' => true];
     }
 }
