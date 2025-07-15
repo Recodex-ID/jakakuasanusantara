@@ -1,5 +1,5 @@
 <aside :class="{ 'w-full md:w-64': sidebarOpen, 'w-0 md:w-16 hidden md:block': !sidebarOpen }"
-    class="bg-sidebar text-sidebar-foreground border-r border-gray-200 dark:border-gray-700 sidebar-transition overflow-hidden">
+    class="bg-sidebar text-sidebar-foreground border-r border-gray-200 sidebar-transition overflow-hidden">
     <!-- Sidebar Content -->
     <div class="h-full flex flex-col">
         <!-- Sidebar Menu -->
@@ -22,7 +22,6 @@
                     <!-- Attendance Management -->
                     <x-layouts.sidebar-link href="{{ route('admin.attendances.index') }}" icon='fas-clock'
                         :active="request()->routeIs('admin.attendances*')">Attendance</x-layouts.sidebar-link>
-
                 @endif
 
                 @if (auth()->user()->isEmployee())
@@ -36,14 +35,8 @@
                 @endif
 
                 <!-- Settings -->
-                <x-layouts.sidebar-two-level-link-parent title="Settings" icon="fas-cog" :active="request()->routeIs('settings*')">
-                    <x-layouts.sidebar-two-level-link href="{{ route('settings.profile.edit') }}" icon='fas-user-edit'
-                        :active="request()->routeIs('settings.profile*')">Profile</x-layouts.sidebar-two-level-link>
-                    <x-layouts.sidebar-two-level-link href="{{ route('settings.password.edit') }}" icon='fas-key'
-                        :active="request()->routeIs('settings.password*')">Password</x-layouts.sidebar-two-level-link>
-                    <x-layouts.sidebar-two-level-link href="{{ route('settings.appearance.edit') }}" icon='fas-palette'
-                        :active="request()->routeIs('settings.appearance*')">Appearance</x-layouts.sidebar-two-level-link>
-                </x-layouts.sidebar-two-level-link-parent>
+                <x-layouts.sidebar-link href="{{ route('employee.profile') }}" icon='fas-cog' :active="request()->routeIs('settings*')">
+                    Settings</x-layouts.sidebar-link>
             </ul>
         </nav>
     </div>

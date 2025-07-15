@@ -22,7 +22,7 @@ class AttendanceController extends Controller
             $monthYear = explode('-', $request->month);
             $year = $monthYear[0];
             $month = $monthYear[1];
-            
+
             $query->whereYear('date', $year)
                   ->whereMonth('date', $month);
         }
@@ -40,22 +40,22 @@ class AttendanceController extends Controller
         $stats = [];
         if (($request->has('month') && $request->month) || ($request->has('employee_id') && $request->employee_id)) {
             $statsQuery = Attendance::query();
-            
+
             if ($request->has('month') && $request->month) {
                 $monthYear = explode('-', $request->month);
                 $year = $monthYear[0];
                 $month = $monthYear[1];
-                
+
                 $statsQuery->whereYear('date', $year)
                           ->whereMonth('date', $month);
             }
-            
+
             if ($request->has('employee_id') && $request->employee_id) {
                 $statsQuery->where('employee_id', $request->employee_id);
             }
-            
+
             $filteredAttendances = $statsQuery->get();
-                
+
             $stats = [
                 'total' => $filteredAttendances->count(),
                 'present' => $filteredAttendances->where('status', 'present')->count(),
@@ -75,7 +75,7 @@ class AttendanceController extends Controller
         $employees = Employee::with('user')
             ->where('status', 'active')
             ->get();
-        
+
         $locations = Location::where('status', 'active')->get();
 
         return view('admin.attendances.create', compact('employees', 'locations'));
@@ -151,7 +151,7 @@ class AttendanceController extends Controller
         $employees = Employee::with('user')
             ->where('status', 'active')
             ->get();
-        
+
         $locations = Location::where('status', 'active')->get();
 
         return view('admin.attendances.edit', compact('attendance', 'employees', 'locations'));
@@ -193,68 +193,5 @@ class AttendanceController extends Controller
 
         return redirect()->route('admin.attendances.index')
             ->with('success', 'Attendance record deleted successfully.');
-    }
-
-    public function monitor(Request $request)
-    {
-        $today = Carbon::today();
-        
-        $todayAttendances = Attendance::with(['employee.user', 'location'])
-            ->where('date', $today)
-            ->orderBy('check_in', 'desc')
-            ->get();
-
-        $recentLogs = AttendanceLog::with(['employee.user', 'location'])
-            ->where('action_time', '>=', $today)
-            ->orderBy('action_time', 'desc')
-            ->take(20)
-            ->get();
-
-        $stats = [
-            'total_today' => $todayAttendances->count(),
-            'present_today' => $todayAttendances->where('status', 'present')->count(),
-            'late_today' => $todayAttendances->where('status', 'late')->count(),
-            'absent_today' => $todayAttendances->where('status', 'absent')->count(),
-        ];
-
-        return view('admin.attendances.monitor', compact('todayAttendances', 'recentLogs', 'stats'));
-    }
-
-
-    public function bulkUpdate(Request $request)
-    {
-        $request->validate([
-            'attendance_ids' => 'required|array',
-            'attendance_ids.*' => 'exists:attendances,id',
-            'bulk_action' => 'required|in:mark_present,mark_absent,mark_late,delete',
-        ]);
-
-        $attendanceIds = $request->attendance_ids;
-        $action = $request->bulk_action;
-
-        switch ($action) {
-            case 'mark_present':
-                Attendance::whereIn('id', $attendanceIds)->update(['status' => 'present']);
-                $message = 'Selected attendances marked as present.';
-                break;
-            
-            case 'mark_absent':
-                Attendance::whereIn('id', $attendanceIds)->update(['status' => 'absent']);
-                $message = 'Selected attendances marked as absent.';
-                break;
-            
-            case 'mark_late':
-                Attendance::whereIn('id', $attendanceIds)->update(['status' => 'late']);
-                $message = 'Selected attendances marked as late.';
-                break;
-            
-            case 'delete':
-                Attendance::whereIn('id', $attendanceIds)->delete();
-                $message = 'Selected attendances deleted.';
-                break;
-        }
-
-        return redirect()->route('admin.attendances.index')
-            ->with('success', $message);
     }
 }

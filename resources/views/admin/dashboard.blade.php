@@ -15,8 +15,8 @@
                             <p class="text-gray-600">Face Recognition Attendance System - PT Jaka Kuasa Nusantara</p>
                         </div>
                         <div class="text-right">
-                            <div class="text-sm text-gray-500">{{ now()->format('l, F j, Y') }}</div>
-                            <div class="text-lg font-semibold text-gray-900">{{ now()->format('H:i') }}</div>
+                            <div class="text-sm text-gray-500">{{ now()->format('l, j F Y') }}</div>
+                            <div class="text-lg font-semibold text-gray-900" id="realtime-clock">{{ now()->format('H:i:s') }}</div>
                         </div>
                     </div>
                 </div>
@@ -135,16 +135,16 @@
                                 <span class="text-sm font-medium text-green-900">Add Location</span>
                             </a>
 
-                            <a href="{{ route('admin.attendances.monitor') }}"
+                            <a href="{{ route('admin.attendances.index') }}"
                                 class="flex items-center p-4 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition-colors">
                                 <x-fas-chart-bar class="w-6 h-6 text-yellow-600 mr-3" />
-                                <span class="text-sm font-medium text-yellow-900">Monitor Today</span>
+                                <span class="text-sm font-medium text-yellow-900">All Attendances</span>
                             </a>
 
-                            <a href="{{ route('admin.attendances.index') }}"
+                            <a href="{{ route('admin.employees.index') }}"
                                 class="flex items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
                                 <x-fas-list class="w-6 h-6 text-purple-600 mr-3" />
-                                <span class="text-sm font-medium text-purple-900">View Attendance</span>
+                                <span class="text-sm font-medium text-purple-900">Manage Employees</span>
                             </a>
                         </div>
                     </div>
@@ -187,7 +187,7 @@
                         </div>
                         @if($recentActivity->count() > 0)
                             <div class="mt-4 text-center">
-                                <a href="{{ route('admin.attendances.index') }}" 
+                                <a href="{{ route('admin.attendances.index') }}"
                                     class="text-sm text-blue-600 hover:text-blue-800">
                                     View all attendance records →
                                 </a>
@@ -260,4 +260,20 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-GB', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('realtime-clock').textContent = timeString;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
 </x-layouts.app>

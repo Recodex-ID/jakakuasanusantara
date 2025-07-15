@@ -1,16 +1,16 @@
 <!-- Header -->
-<header class="bg-white dark:bg-gray-800 shadow-sm z-20 border-b border-gray-200 dark:border-gray-700">
+<header class="bg-white shadow-sm z-20 border-b border-gray-200">
     <div class="flex items-center justify-between h-16 px-4">
         <!-- Left side: Logo and toggle -->
         <div class="flex items-center">
             <button @click="toggleSidebar"
-                class="p-2 rounded-md text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none">
+                class="p-2 rounded-md text-gray-500 hover:text-gray-700 focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
-            <div class="ml-4 font-semibold text-xl text-blue-600 dark:text-blue-400">{{ config('app.name') }}</div>
+            <div class="ml-4 font-semibold text-xl text-blue-600">{{ config('app.name') }}</div>
         </div>
 
         <!-- Right side: Search, notifications, profile -->
@@ -20,7 +20,7 @@
                 <button @click="open = !open" class="flex items-center focus:outline-none">
                     <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
                         <span
-                            class="flex h-full w-full items-center justify-center rounded-lg bg-gray-200 text-black dark:bg-gray-700 dark:text-white">
+                            class="flex h-full w-full items-center justify-center rounded-lg bg-gray-200 text-black">
                             {{ Auth::user()->initials() }}
                         </span>
                     </span>
@@ -32,9 +32,9 @@
                 </button>
 
                 <div x-show="open" @click.away="open = false" :class="{ 'block': open, 'hidden': !open }"
-                    class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-gray-700">
+                    class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
                     <a href="{{ route('settings.profile.edit') }}"
-                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <div class="flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
@@ -46,11 +46,11 @@
                             Settings
                         </div>
                     </a>
-                    <div class="border-t border-gray-200 dark:border-gray-700"></div>
+                    <div class="border-t border-gray-200"></div>
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
                         <button type="submit"
-                            class="block w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            class="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             <div class="flex items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor">

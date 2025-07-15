@@ -21,14 +21,12 @@ Route::get('dashboard', function () {
         return redirect()->route('employee.dashboard');
     }
 
-    return view('dashboard');
+    return redirect()->route('login');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Admin Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [Admin\DashboardController::class, 'index'])->name('dashboard');
 
     // Employee Management
     Route::resource('employees', Admin\EmployeeController::class);
@@ -43,24 +41,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     // Location Management
     Route::resource('locations', Admin\LocationController::class);
-    Route::post('locations/validate', [Admin\LocationController::class, 'validateLocation'])
-        ->name('locations.validate');
-
+    Route::post('locations/validate', [Admin\LocationController::class, 'validateLocation'])->name('locations.validate');
 
     // Attendance Management
     Route::resource('attendances', Admin\AttendanceController::class);
-    Route::get('attendances-monitor', [Admin\AttendanceController::class, 'monitor'])
-        ->name('attendances.monitor');
-    Route::post('attendances/bulk-update', [Admin\AttendanceController::class, 'bulkUpdate'])
-        ->name('attendances.bulk-update');
-
-    // Reports
-    Route::prefix('reports')->name('reports.')->group(function () {
-        Route::get('/', [Admin\ReportController::class, 'index'])->name('index');
-        Route::get('attendance', [Admin\ReportController::class, 'attendance'])->name('attendance');
-        Route::get('summary', [Admin\ReportController::class, 'summary'])->name('summary');
-        Route::get('analytics', [Admin\ReportController::class, 'analytics'])->name('analytics');
-    });
 });
 
 // Employee Routes
@@ -73,8 +57,7 @@ Route::middleware(['auth', 'employee', 'ensure.employee.profile'])->prefix('empl
     // Attendance
     Route::prefix('attendance')->name('attendance.')->group(function () {
         Route::get('/', [Employee\AttendanceController::class, 'index'])->name('index');
-        Route::post('record', [Employee\AttendanceController::class, 'record'])
-            ->middleware('rate.limit.attendance')->name('record');
+        Route::post('record', [Employee\AttendanceController::class, 'record'])->middleware('rate.limit.attendance')->name('record');
         Route::get('history', [Employee\AttendanceController::class, 'history'])->name('history');
         Route::get('{attendance}', [Employee\AttendanceController::class, 'show'])->name('show');
     });
@@ -94,7 +77,6 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('settings/profile', [Settings\ProfileController::class, 'destroy'])->name('settings.profile.destroy');
     Route::get('settings/password', [Settings\PasswordController::class, 'edit'])->name('settings.password.edit');
     Route::put('settings/password', [Settings\PasswordController::class, 'update'])->name('settings.password.update');
-    Route::get('settings/appearance', [Settings\AppearanceController::class, 'edit'])->name('settings.appearance.edit');
 });
 
 require __DIR__ . '/auth.php';
