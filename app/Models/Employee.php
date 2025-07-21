@@ -25,11 +25,15 @@ class Employee extends Model
         'work_end_time',
         'late_tolerance_minutes',
         'work_days',
+        'face_enrolled',
+        'face_enrolled_at',
     ];
 
     protected $casts = [
         'date_of_birth' => 'date',
         'work_days' => 'array',
+        'face_enrolled' => 'boolean',
+        'face_enrolled_at' => 'datetime',
     ];
 
     public function user(): BelongsTo
@@ -54,19 +58,16 @@ class Employee extends Model
 
     public function isFaceEnrolled(): bool
     {
-        try {
-            $faceApiService = app(\App\Services\FaceApiService::class);
-            $response = $faceApiService->listAllFaces();
+        // Use cached database field instead of making API call
+        return $this->face_enrolled ?? false;
+    }
 
-            if (isset($response['status']) && $response['status'] === '200' && isset($response['faces'])) {
-                $enrolledFaces = array_column($response['faces'], 'user_id');
-                return in_array($this->employee_id, $enrolledFaces);
-            }
-        } catch (\Exception $e) {
-            // If face API is unavailable, return false to be safe
-        }
-
-        return false;
+    public function setFaceEnrolled(bool $enrolled): void
+    {
+        $this->update([
+            'face_enrolled' => $enrolled,
+            'face_enrolled_at' => $enrolled ? now() : null,
+        ]);
     }
 
     // Work schedule helper methods

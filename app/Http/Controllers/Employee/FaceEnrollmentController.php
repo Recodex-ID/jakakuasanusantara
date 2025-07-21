@@ -65,6 +65,9 @@ class FaceEnrollmentController extends Controller
             );
 
             if (isset($response['status']) && $response['status'] === '200') {
+                // Update database field to reflect successful enrollment
+                $employee->setFaceEnrolled(true);
+                
                 Log::info('Face enrollment successful', [
                     'employee_id' => $employee->id,
                     'employee_name' => $employee->user->name,
@@ -131,6 +134,9 @@ class FaceEnrollmentController extends Controller
             $response = $this->faceApiService->deleteEmployeeFace($employee->employee_id);
 
             if (isset($response['status']) && $response['status'] === '200') {
+                // Update database field to reflect successful deletion
+                $employee->setFaceEnrolled(false);
+                
                 Log::info('Face deletion successful', [
                     'employee_id' => $employee->id,
                     'employee_name' => $employee->user->name,

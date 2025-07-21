@@ -68,16 +68,8 @@ class DashboardController extends Controller
 
     private function getEnrolledFacesCount(): int
     {
-        $enrolledCount = 0;
-        $employees = Employee::all();
-        
-        foreach ($employees as $employee) {
-            if ($employee->isFaceEnrolled()) {
-                $enrolledCount++;
-            }
-        }
-        
-        return $enrolledCount;
+        // Use database count instead of looping through employees and making API calls
+        return Employee::where('face_enrolled', true)->count();
     }
 
     private function getRecentActivity()
