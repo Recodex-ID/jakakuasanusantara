@@ -16,6 +16,19 @@
     --sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
     --sidebar-border: hsl(var(--sidebar-border));
     --sidebar-ring: hsl(var(--sidebar-ring));
+    
+    /* Override Tailwind blue colors */
+    --color-blue-50: #f0f3ff;
+    --color-blue-100: #e6ebff;
+    --color-blue-200: #d1dcff;
+    --color-blue-300: #b3c4ff;
+    --color-blue-400: #8da3ff;
+    --color-blue-500: #6d84ff;
+    --color-blue-600: #132C5E;
+    --color-blue-700: #0f244a;
+    --color-blue-800: #0c1d39;
+    --color-blue-900: #0a1829;
+    --color-blue-950: #060f1a;
 }
 
 @layer components {
@@ -47,7 +60,7 @@
         --sidebar-accent: 217 33% 17%;
         --sidebar-accent-foreground: 210 40% 98%;
         --sidebar-border: 214 32% 91%;
-        --sidebar-ring: 221 83% 53%;
+        --sidebar-ring: 217 65% 27%;
     }
 }
 

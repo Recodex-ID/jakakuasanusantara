@@ -10,7 +10,10 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
-            <div class="ml-4 font-semibold text-xl text-blue-600">{{ config('app.name') }}</div>
+            <div class="flex items-center ml-4">
+                <img src="{{ asset('image/logo.png') }}" alt="Logo" class="h-12 w-auto mr-3">
+                <div class="font-semibold text-xl" style="color: #132C5E;">{{ config('app.name') }}</div>
+            </div>
         </div>
 
         <!-- Right side: Search, notifications, profile -->

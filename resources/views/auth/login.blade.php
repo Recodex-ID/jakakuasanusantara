@@ -20,7 +20,7 @@
                     <x-forms.input label="Password" name="password" type="password" placeholder="••••••••" />
                     @if (Route::has('password.request'))
                         <a href="{{ route('password.request') }}"
-                            class="text-xs text-blue-600 hover:underline">{{ __('Forgot password?') }}</a>
+                            class="text-xs hover:underline" style="color: #132C5E;">{{ __('Forgot password?') }}</a>
                     @endif
                 </div>
 
@@ -39,7 +39,7 @@
                     <p class="text-sm text-gray-600">
                         {{ __('Don\'t have an account?') }}
                         <a href="{{ route('register') }}"
-                            class="text-blue-600 hover:underline font-medium">{{ __('Sign up') }}</a>
+                            class="hover:underline font-medium" style="color: #132C5E;">{{ __('Sign up') }}</a>
                     </p>
                 </div>
             @endif
